@@ -29,14 +29,12 @@
 .botoes-barbeiros{
     display: flex;
     flex-direction: row;
-    align-items: center;
     gap: 5vh;
 }
 
 .botoes-data{
     display: flex;
     flex-direction: row;
-    align-items: center;
     gap: 5vh;
 }
 

@@ -1,0 +1,5 @@
+.botoes-barbeiros{
+    display: flex;
+    flex-direction: row;
+    gap: 5vh;
+}
