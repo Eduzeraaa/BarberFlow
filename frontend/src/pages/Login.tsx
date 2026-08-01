@@ -1,11 +1,20 @@
 import './Login.css'
 import { useState } from 'react'
+import { FaUser } from 'react-icons/fa'
+import { TbLock } from 'react-icons/tb' 
 
 export function Login () {
 
     const [user, setUser] = useState('')
     const [password, setPassword] = useState('')
 
+    const [confirmedUser, setConfirmedUser] = useState('')
+    const [confirmedPassword, setConfirmedPassword] = useState('')
+
+    function handleConfirm() {
+        setConfirmedUser(user)
+        setConfirmedPassword(password)
+    }
 
     return (
         <>
@@ -15,6 +24,7 @@ export function Login () {
                 <div className="login-container">
                     
                     <div className='user'>
+                        <FaUser/>
                         <label>Usuário</label>
                         <input 
                             type="text"
@@ -24,6 +34,7 @@ export function Login () {
 
 
                     <div className='password'>
+                        <TbLock/>
                         <label>Senha</label>
                         <input 
                             type="password"
@@ -32,10 +43,13 @@ export function Login () {
                     </div>
 
 
-                        <button className='confirm-button'>Confirmar</button>
+                        <button 
+                            className='confirm-button'
+                            onClick={handleConfirm}
+                        >Confirmar</button>
 
-                    <p>Usuário: {user}</p>
-                    <p>Senha: {password}</p>
+                    <p>Usuário: {confirmedUser}</p>
+                    <p>Senha: {confirmedPassword}</p>
                     
                 </div>
             </div>

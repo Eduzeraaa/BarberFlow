@@ -8,6 +8,19 @@ export function Agendamento () {
     const [barbeiro, setBarbeiro] = useState('')
     const [data, setData] = useState ('')
     const [horario, setHorario] = useState ('')
+    const hoje = new Date().toISOString().split('T')[0]
+
+    const [confirmedService, setConfirmedService] = useState('')
+    const [confirmedBarbeiro, setConfirmedBarbeiro] = useState('')
+    const [confirmedData, setConfirmedData] = useState('')
+    const [confirmedHorario, setConfirmedHorario] = useState('')
+
+    function handleConfirm() {
+        setConfirmedService(servico)
+        setConfirmedBarbeiro(barbeiro)
+        setConfirmedData(data)
+        setConfirmedHorario(horario)
+    }
 
     return (
         <>
@@ -32,11 +45,13 @@ export function Agendamento () {
                     aoSelecionar={setBarbeiro}
                 />
 
-                <BlocoSelecao 
-                    titulo="Data"
-                    opcoes={['Hoje', 'Amanhã', 'Depois de amanhã']}
-                    valorSelecionado={data}
-                    aoSelecionar={setData}
+                <h2>Data</h2>
+                <input
+                    className='botao-data'
+                    type="date"
+                    min={hoje}
+                    value={data}
+                    onChange={(event) => setData(event.target.value)}
                 />
 
                 <BlocoSelecao 
@@ -46,7 +61,23 @@ export function Agendamento () {
                     aoSelecionar={setHorario}
                 />
 
-                    <h2>Você escolheu {servico}, que será feito pelo {barbeiro} na {horario} de {data}.</h2>
+                    <div className='resumo'>
+                        <div className='header-resumo'>
+                            <h2>━━━━━━━━━━━━━━━━━━━━━━━━━━━━</h2>
+                            <h2>Resumo do Agendamento</h2>
+                        </div>
+
+                        <h3>Serviço: {confirmedService}</h3>
+                        <h3>Barbeiro: {confirmedBarbeiro}</h3>
+                        <h3>Data: {confirmedData}</h3>
+                        <h3>Horário: {confirmedHorario}</h3>
+                        
+                        <button 
+                            className='botao-confirmacao-resumo'
+                            onClick={handleConfirm}
+                        >Confirmar agendamento</button>
+
+                    </div>
 
                 </div>
 
