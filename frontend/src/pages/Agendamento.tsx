@@ -21,28 +21,28 @@ export function Agendamento () {
                 <BlocoSelecao 
                     titulo="Serviço"
                     opcoes={['Barba', 'Degradê', 'Social']}
-                    confirmacao={servico}
+                    valorSelecionado={servico}
                     aoSelecionar={setServico}
                 />
 
                 <BlocoSelecao
                     titulo="Barbeiro"
                     opcoes={['José', 'Roberto', 'Cláudio']}
-                    confirmacao={barbeiro}
+                    valorSelecionado={barbeiro}
                     aoSelecionar={setBarbeiro}
                 />
 
                 <BlocoSelecao 
                     titulo="Data"
                     opcoes={['Hoje', 'Amanhã', 'Depois de amanhã']}
-                    confirmacao={data}
+                    valorSelecionado={data}
                     aoSelecionar={setData}
                 />
 
                 <BlocoSelecao 
                     titulo="Horário"
                     opcoes={['Manhã', 'Tarde', 'Noite']}
-                    confirmacao={horario}
+                    valorSelecionado={horario}
                     aoSelecionar={setHorario}
                 />
 

@@ -2,7 +2,7 @@ import './BlocoSelecao.css'
 
 interface BlocoSelecaoProps {
     titulo: string,
-    confirmacao: string,
+    valorSelecionado: string,
     opcoes: string[],
     aoSelecionar: (opcao: string) => void
 }
@@ -13,13 +13,21 @@ export function BlocoSelecao (props: BlocoSelecaoProps) {
             <div>
                 <h2>{props.titulo}</h2>
             </div>
-            <div className='botoes-barbeiros'>
+            <div className='area-botoes'>
                 {props.opcoes.map((opcao) => {
-                    return <button onClick={() => props.aoSelecionar(opcao)}>{opcao}</button>
+
+                    if (props.valorSelecionado !== null) {
+                        
+                    }
+
+                    return <button
+                    className={opcao === props.valorSelecionado ? 'selecionado' : ''}
+                    onClick={() => props.aoSelecionar(opcao)}
+                    >
+                        {opcao}
+                    </button>
                 })}
             </div>
-            
-            <p>Escolha: {props.confirmacao}</p>
         </>
     )
 }
