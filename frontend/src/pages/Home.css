@@ -7,8 +7,21 @@
     gap: 10vh;
 }
 
-.content-home{
+.about-us{
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+    width: 53vh;;
+}
+
+.our-services{
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+}
+
+.row-our-services{
     display: flex;
     flex-direction: row;
-    gap: 20vh;
+    gap: 7vh;
 }
