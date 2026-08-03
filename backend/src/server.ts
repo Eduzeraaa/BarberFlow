@@ -15,10 +15,18 @@ interface User {
     password: string,
 }
 
+interface Agendamento {
+    service: string
+    barber: string
+    date: string
+    time: string
+}
+
 const client = new MongoClient(url)
 
-const database = client.db('users')
-const collection = database.collection<User>('users')
+const database = client.db('barbearia')
+const users = database.collection<User>('users')
+const agendamentos = database.collection<Agendamento>('agendamentos')
 
 await client.connect()
 const app = express()
@@ -26,16 +34,68 @@ const port = 3000
 
 app.use(express.json())
 
-app.post('/login', async (request, response) => {
+app.post('/cadastro', async (request, response) => {
 
-    const {user, password} = request.body
+    const {username, password} = request.body // desestruturação
+    // mesma coisa q fazer isso:
+    // const user = request.body.user
+    // const password = request.body.passwrod
 
-    const insertResult = await collection.insertOne({username: user, password: password})
+    const insertResult = await users.insertOne({username, password})
 
     response.json({
         message: 'Cadastro realizado!',
-        result: insertResult
+        //result: insertResult
     })
+
+})
+
+app.post('/login', async (request, response) => {
+
+    const {username, password} = request.body
+
+    const searchResult = await users.findOne({username, password})
+
+    if (searchResult === null){
+        response.json({
+            message: 'Usuário ou senha incorretos.',
+            //result: searchResult
+        })
+    }
+
+    else{
+        response.json({
+            message: 'Login efetuado com sucesso!',
+            //result: searchResult
+        })
+    }
+})
+
+app.post('/agendamento', async (request, response) => {
+
+    const {service, barber, date, time} = request.body
+
+    
+    if (service === undefined || barber === undefined || date === undefined || time === undefined){
+        response.json({
+            message: 'Falta alguma informação! Confira novamente seu agendamento.',
+        })
+    }
+    
+    else {
+
+        const insertResult = await agendamentos.insertOne({
+            service,
+            barber,
+            date,
+            time
+        })
+        
+        response.json({
+            message: `Agendamento realizado com sucesso! Nos vemos no dia ${date} às ${time}.`,
+            result: insertResult
+        })
+    }
 
 })
 
