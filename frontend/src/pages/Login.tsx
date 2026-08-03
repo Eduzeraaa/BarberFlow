@@ -19,11 +19,11 @@ export function Login () {
     return (
         <>
             <div className="login-content">
-            <h1 className="header-login">Login</h1>
+            <h1>Login</h1>
 
                 <div className="login-container">
                     
-                    <div className='user'>
+                    <div className='user-login'>
                         <FaUser/>
                         <label>Usuário</label>
                         <input 
@@ -33,7 +33,7 @@ export function Login () {
                     </div>
 
 
-                    <div className='password'>
+                    <div className='password-login'>
                         <TbLock/>
                         <label>Senha</label>
                         <input 
