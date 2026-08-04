@@ -9,27 +9,36 @@ export function Cadastro () {
     const [password, setPassword] = useState('')
     const [passwordConfirm, setPasswordConfirm] = useState('')
 
-    const [confirmedUser, setConfirmedUser] = useState('')
-    const [confirmedPassword, setConfirmedPassword] = useState('')
-    const [confirmedPasswordConfirm, setConfirmedPasswordConfirm] = useState('')
-
     const [error, setError] = useState('')
 
-    function handleConfirm() {
+    async function handleConfirm() {
         if (password.length < 8){
             setError('Sua senha contém menos que 8 caracteres.')
             return // fim da funçao
         }
         
-        if (password !== passwordConfirm) {
+        else if (password !== passwordConfirm) {
             setError('Senhas diferentes!')
             return // fim da funçao
         }
 
         setError('')
-        setConfirmedUser(user)
-        setConfirmedPassword(password)
-        setConfirmedPasswordConfirm(passwordConfirm)
+
+        const response = await fetch('http://localhost:3000/cadastro', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                user,
+                password
+            })
+        })
+
+        const data = await response.json()
+
+        alert(data.message)
+
     }
 
     return (
@@ -76,11 +85,7 @@ export function Cadastro () {
                             onClick={handleConfirm}
                         >Confirmar</button>
 
-                    
                         <p>{error}</p>
-                        <p>Usuário: {confirmedUser}</p>
-                        <p>Senha: {confirmedPassword}</p>
-                        <p>Senha confirmada: {confirmedPasswordConfirm}</p>
                     
                 </div>
             </div>

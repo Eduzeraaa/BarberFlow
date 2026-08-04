@@ -2,19 +2,29 @@ import type { Request, Response } from 'express'
 import { users } from '../config/database.js'
 
 export async function signup(request: Request, response: Response) {
-    const {username, password} = request.body
+    const {user, password} = request.body
 
-    const insertResult = await users.insertOne({username, password})
+    const insertResult = await users.insertOne({user, password})
 
-    response.json({
-        message: 'Cadastro realizado!',
-    })
+    const searchResult = await users.findOne({user})
+
+    if (searchResult === null){
+        response.json({
+            message: 'Cadastro realizado!',
+        })
+    }
+
+    else{
+        response.json({
+            message: 'Já existe um usuário com este nome. Tente outro por favor!'
+        })
+    }
 }
 
 export async function login(request: Request, response: Response) {
-    const {username, password} = request.body
+    const {user, password} = request.body
 
-    const searchResult = await users.findOne({username, password})
+    const searchResult = await users.findOne({user, password})
 
     if (searchResult === null){
         response.json({
