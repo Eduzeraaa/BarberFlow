@@ -4,22 +4,34 @@ import { BlocoSelecao } from '../components/BlocoSelecao/BlocoSelecao'
 
 export function Agendamento () {
 
-    const [servico, setServico] = useState('')
-    const [barbeiro, setBarbeiro] = useState('')
-    const [data, setData] = useState ('')
-    const [horario, setHorario] = useState ('')
+    const [service, setService] = useState('')
+    const [barber, setBarber] = useState('')
+    const [date, setDate] = useState ('')
+    const [time, setTime] = useState ('')
     const hoje = new Date().toISOString().split('T')[0]
 
-    const [confirmedService, setConfirmedService] = useState('')
-    const [confirmedBarbeiro, setConfirmedBarbeiro] = useState('')
-    const [confirmedData, setConfirmedData] = useState('')
-    const [confirmedHorario, setConfirmedHorario] = useState('')
+    async function handleConfirm() {
 
-    function handleConfirm() {
-        setConfirmedService(servico)
-        setConfirmedBarbeiro(barbeiro)
-        setConfirmedData(data)
-        setConfirmedHorario(horario)
+        const currentUser = localStorage.getItem('currentUser')
+
+        const response = await fetch('http://localhost:3000/agendamento', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                user: currentUser,
+                service,
+                barber,
+                date,
+                time
+            })
+        })
+
+        const data = await response.json()
+
+        alert(data.message)
+
     }
 
     return (
@@ -34,15 +46,15 @@ export function Agendamento () {
                 <BlocoSelecao 
                     titulo="Serviço"
                     opcoes={['Barba', 'Degradê', 'Social']}
-                    valorSelecionado={servico}
-                    aoSelecionar={setServico}
+                    valorSelecionado={service}
+                    aoSelecionar={setService}
                 />
 
                 <BlocoSelecao
                     titulo="Barbeiro"
                     opcoes={['José', 'Roberto', 'Cláudio']}
-                    valorSelecionado={barbeiro}
-                    aoSelecionar={setBarbeiro}
+                    valorSelecionado={barber}
+                    aoSelecionar={setBarber}
                 />
 
                 <h2>Data</h2>
@@ -50,34 +62,21 @@ export function Agendamento () {
                     className='botao-data'
                     type="date"
                     min={hoje}
-                    value={data}
-                    onChange={(event) => setData(event.target.value)}
+                    value={date}
+                    onChange={(event) => setDate(event.target.value)}
                 />
 
                 <BlocoSelecao 
                     titulo="Horário"
                     opcoes={['Manhã', 'Tarde', 'Noite']}
-                    valorSelecionado={horario}
-                    aoSelecionar={setHorario}
+                    valorSelecionado={time}
+                    aoSelecionar={setTime}
                 />
-
-                    <div className='resumo'>
-                        <div className='header-resumo'>
-                            <h2>━━━━━━━━━━━━━━━━━━━━━━━━━━━━</h2>
-                            <h2>Resumo do Agendamento</h2>
-                        </div>
-
-                        <h3>Serviço: {confirmedService}</h3>
-                        <h3>Barbeiro: {confirmedBarbeiro}</h3>
-                        <h3>Data: {confirmedData}</h3>
-                        <h3>Horário: {confirmedHorario}</h3>
                         
                         <button 
                             className='botao-confirmacao-resumo'
                             onClick={handleConfirm}
                         >Confirmar agendamento</button>
-
-                    </div>
 
                 </div>
 

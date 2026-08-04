@@ -8,9 +8,9 @@ export function Login () {
     const [user, setUser] = useState('')
     const [password, setPassword] = useState('')
 
-
+    
     async function handleConfirm() {
-
+        
         const response = await fetch('http://localhost:3000/login', {
             method: 'POST',
             headers: {
@@ -21,13 +21,16 @@ export function Login () {
                 password
             })
         })
-
+        
         const data = await response.json()
 
+        localStorage.setItem('currentUser', data.user) // localStorage é uma memória do navegador que guarda dados mesmo depois que a página é recarregada
+        
         alert(data.message)
-
+        
     }
-
+    
+    
     return (
         <>
             <div className="login-content">
@@ -41,7 +44,7 @@ export function Login () {
                         <input 
                             type="text"
                             onChange={(event) => setUser(event.target.value)}
-                        />
+                            />
                     </div>
 
 

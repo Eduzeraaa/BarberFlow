@@ -19,13 +19,6 @@
     gap: 7vh;
 }
 
-.resumo{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap:3vh;
-}
-
 /* From Uiverse.io by gharsh11032000 */ 
 .botao-confirmacao-resumo {
   width: 280px;
