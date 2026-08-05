@@ -2,12 +2,16 @@ import './Cadastro.css'
 import { useState } from 'react'
 import { FaUser } from 'react-icons/fa'
 import { TbLock } from 'react-icons/tb' 
+import { useNavigate } from 'react-router-dom'
 
 export function Cadastro () {
 
     const [user, setUser] = useState('')
     const [password, setPassword] = useState('')
     const [passwordConfirm, setPasswordConfirm] = useState('')
+    const [confirm, setConfirm] = useState('')
+
+    const redirect = useNavigate()
 
     const [error, setError] = useState('')
 
@@ -37,7 +41,19 @@ export function Cadastro () {
 
         const data = await response.json()
 
-        alert(data.message)
+        if (data.message === 'Cadastro realizado!'){
+            redirect('/login', {
+                state: {
+                    message: data.message
+                }
+            })
+        }
+
+        else{
+            setConfirm(data.message)
+        }
+
+        
 
     }
 
@@ -80,12 +96,16 @@ export function Cadastro () {
                     </div>
 
 
-                        <button 
-                            className='confirm-button'
-                            onClick={handleConfirm}
-                        >Confirmar</button>
+                    <button 
+                        className='confirm-button'
+                        onClick={handleConfirm}
+                    >Confirmar</button>
 
-                        <p>{error}</p>
+                    <p>{error}</p>
+
+                    <div className='confirmacao-login'>
+                        <h2>{confirm}</h2>
+                    </div>
                     
                 </div>
             </div>

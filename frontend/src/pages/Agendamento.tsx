@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import './Agendamento.css'
 import { BlocoSelecao } from '../components/BlocoSelecao/BlocoSelecao'
+import { useNavigate } from 'react-router-dom';
+import { FiLogOut } from "react-icons/fi";
 
 export function Agendamento () {
 
@@ -8,7 +10,10 @@ export function Agendamento () {
     const [barber, setBarber] = useState('')
     const [date, setDate] = useState ('')
     const [time, setTime] = useState ('')
+    const [confirm, setConfirm] = useState('')
+
     const hoje = new Date().toISOString().split('T')[0]
+    const redirect = useNavigate()
 
     async function handleConfirm() {
 
@@ -30,53 +35,68 @@ export function Agendamento () {
 
         const data = await response.json()
 
-        alert(data.message)
+        setConfirm(data.message)
 
     }
 
     return (
         <>
         <div className="container-agendamento">
-            <h1 className="header-agendamento">Agende seu horário</h1>
+            <div className="header-agendamento">
+                <h1>Agende seu horário</h1>
+                <button
+                    className='logout'
+                    onClick={() => {
+                        localStorage.removeItem('currentUser')
+                        redirect('/login')
+                    }}
+                > <FiLogOut /></button>
+            </div>
 
             <div className="content-agendamento">
 
                 <div className="options-agendamento">
                 
-                <BlocoSelecao 
-                    titulo="Serviço"
-                    opcoes={['Barba', 'Degradê', 'Social']}
-                    valorSelecionado={service}
-                    aoSelecionar={setService}
-                />
+                    <BlocoSelecao 
+                        titulo="Serviço"
+                        opcoes={['Barba', 'Degradê', 'Social']}
+                        valorSelecionado={service}
+                        aoSelecionar={setService}
+                    />
 
-                <BlocoSelecao
-                    titulo="Barbeiro"
-                    opcoes={['José', 'Roberto', 'Cláudio']}
-                    valorSelecionado={barber}
-                    aoSelecionar={setBarber}
-                />
+                    <BlocoSelecao
+                        titulo="Barbeiro"
+                        opcoes={['José', 'Roberto', 'Cláudio']}
+                        valorSelecionado={barber}
+                        aoSelecionar={setBarber}
+                    />
 
-                <h2>Data</h2>
-                <input
-                    className='botao-data'
-                    type="date"
-                    min={hoje}
-                    value={date}
-                    onChange={(event) => setDate(event.target.value)}
-                />
+                    <h2>Data</h2>
+                    <input
+                        className='botao-data'
+                        type="date"
+                        min={hoje}
+                        value={date}
+                        onChange={(event) => setDate(event.target.value)}
+                    />
 
-                <BlocoSelecao 
-                    titulo="Horário"
-                    opcoes={['Manhã', 'Tarde', 'Noite']}
-                    valorSelecionado={time}
-                    aoSelecionar={setTime}
-                />
-                        
-                        <button 
-                            className='botao-confirmacao-resumo'
-                            onClick={handleConfirm}
-                        >Confirmar agendamento</button>
+                    <BlocoSelecao 
+                        titulo="Horário"
+                        opcoes={['Manhã', 'Tarde', 'Noite']}
+                        valorSelecionado={time}
+                        aoSelecionar={setTime}
+                    />
+                            
+                    <button 
+                        className='botao-confirmacao-resumo'
+                        onClick={handleConfirm}
+                    >Confirmar agendamento</button>
+
+                    
+                    <div className='confirmacao-agendamento'>
+                        <h2>{confirm}</h2>
+                    </div>
+
 
                 </div>
 

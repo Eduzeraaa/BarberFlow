@@ -2,13 +2,13 @@ import type { Request, Response } from 'express'
 import { users } from '../config/database.js'
 
 export async function signup(request: Request, response: Response) {
+
     const {user, password} = request.body
 
-    await users.insertOne({user, password})
-
     const searchResult = await users.findOne({user})
-
+    
     if (searchResult === null){
+        await users.insertOne({user, password})
         response.json({
             message: 'Cadastro realizado!',
         })
