@@ -3,6 +3,7 @@ import './Agendamento.css'
 import { BlocoSelecao } from '../components/BlocoSelecao/BlocoSelecao'
 import { useNavigate } from 'react-router-dom';
 import { FiLogOut } from "react-icons/fi";
+import { apiUrl } from '../config/api';
 
 export function Agendamento () {
 
@@ -19,7 +20,7 @@ export function Agendamento () {
 
         const currentUser = localStorage.getItem('currentUser')
 
-        const response = await fetch('http://localhost:3000/agendamento', {
+        const response = await fetch(`${apiUrl}/agendamento`, {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json'
@@ -80,12 +81,25 @@ export function Agendamento () {
                         onChange={(event) => setDate(event.target.value)}
                     />
 
-                    <BlocoSelecao 
-                        titulo="Horário"
-                        opcoes={['Manhã', 'Tarde', 'Noite']}
-                        valorSelecionado={time}
-                        aoSelecionar={setTime}
-                    />
+                    <h2>Horário</h2>
+                    <select className='horario' name="horario" onChange={(event) => setTime(event.target.value)}>
+                        <option value="08:00">08:00</option>
+                        <option value='08:30'>08:30</option>
+                        <option value='09:00'>09:00</option>
+                        <option value='09:30'>09:30</option>
+                        <option value='10:00'>10:00</option>
+                        <option value='10:30'>10:30</option>
+                        <option value='11:00'>11:00</option>
+                        <option value='11:30'>11:30</option>
+                        <option value='14:00'>14:00</option>
+                        <option value='14:30'>14:30</option>
+                        <option value='15:00'>15:00</option>
+                        <option value='15:30'>15:30</option>
+                        <option value='16:00'>16:00</option>
+                        <option value='16:30'>16:30</option>
+                        <option value='17:00'>17:00</option>
+                        <option value='17:30'>17:30</option>
+                    </select>
                             
                     <button 
                         className='botao-confirmacao-resumo'

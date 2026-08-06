@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { FaUser } from 'react-icons/fa'
 import { TbLock } from 'react-icons/tb' 
 import { useNavigate } from 'react-router-dom'
+import { apiUrl } from '../config/api'
 
 export function Cadastro () {
 
@@ -28,7 +29,7 @@ export function Cadastro () {
 
         setError('')
 
-        const response = await fetch('http://localhost:3000/cadastro', {
+        const response = await fetch(`${apiUrl}/cadastro`, {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json'

@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { FaUser } from 'react-icons/fa'
 import { TbLock } from 'react-icons/tb' 
 import { useNavigate, useLocation } from 'react-router-dom'
+import { apiUrl } from '../config/api'
 
 export function Login () {
 
@@ -16,7 +17,7 @@ export function Login () {
     
     async function handleConfirm() {
         
-        const response = await fetch('http://localhost:3000/login', {
+        const response = await fetch(`${apiUrl}/login`, {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json'

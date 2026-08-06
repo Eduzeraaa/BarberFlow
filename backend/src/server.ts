@@ -3,9 +3,9 @@ import cors from 'cors'
 import { connectDatabase } from './config/database.js'
 import authRoutes from './routes/auth.routes.js'
 import appointmentRoutes from './routes/appointment.routes.js'
+import { port } from './config/env.js'
 
 const app = express()
-const port = 3000
 
 app.use(cors())
 app.use(express.json())
