@@ -1,6 +1,22 @@
 import { Link } from 'react-router-dom'
 import './Home.css'
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+
 export function Home() {
+
+    const redirect = useNavigate()
+
+    const currentUser = localStorage.getItem('currentUser')
+    
+    useEffect(() => {
+        
+        if (currentUser === null){
+            redirect('/login')
+        }
+
+    })
+
     return (
         <>
         <div className="container-home">

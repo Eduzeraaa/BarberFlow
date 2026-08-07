@@ -4,6 +4,7 @@ import { BlocoSelecao } from '../components/BlocoSelecao/BlocoSelecao'
 import { useNavigate } from 'react-router-dom';
 import { FiLogOut } from "react-icons/fi";
 import { apiUrl } from '../config/api';
+import { useEffect } from 'react';
 
 export function Agendamento () {
 
@@ -16,9 +17,19 @@ export function Agendamento () {
     const hoje = new Date().toISOString().split('T')[0]
     const redirect = useNavigate()
 
+    const currentUser = localStorage.getItem('currentUser')
+    
+    useEffect(() => {
+        
+        if (currentUser === null){
+            redirect('/login')
+        }
+
+    })
+
+
     async function handleConfirm() {
 
-        const currentUser = localStorage.getItem('currentUser')
 
         const response = await fetch(`${apiUrl}/agendamento`, {
             method: 'POST',

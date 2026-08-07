@@ -4,6 +4,7 @@ import { FaUser } from 'react-icons/fa'
 import { TbLock } from 'react-icons/tb' 
 import { useNavigate, useLocation } from 'react-router-dom'
 import { apiUrl } from '../config/api'
+import { Link } from 'react-router-dom'
 
 export function Login () {
 
@@ -69,6 +70,10 @@ export function Login () {
                             type="password"
                             onChange={(event) => setPassword(event.target.value)}
                         />
+                    </div>
+
+                    <div className='no-account'>
+                        <Link to={'/cadastro'}>Não tenho conta</Link>
                     </div>
 
 

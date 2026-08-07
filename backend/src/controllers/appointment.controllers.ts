@@ -11,12 +11,10 @@ export async function createAppointment(request: Request, response: Response) {
         return
     }
 
-    const searchTime = await agendamentos.findOne({'time': time})
-    const searchDate = await agendamentos.findOne({'date': date})
-    const searchBarber = await agendamentos.findOne({'barber': barber})
+    const searchRequirements = await agendamentos.findOne({'time': time, 'date': date, 'barber': barber})
 
 
-    if (searchBarber !== null && searchDate !== null && searchTime !== null){
+    if (searchRequirements !== null ){
         response.json({
             message: `${barber} está com o horário ocupado. Tente outro horário ou outro barbeiro!`
         })
