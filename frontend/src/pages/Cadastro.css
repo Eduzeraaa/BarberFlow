@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10vh;
+    gap: 2.5vh;
 }
 
 .cadastro-container{
@@ -10,6 +10,10 @@
     flex-direction: column;
     /* border: 1px solid red; */
     gap: 3vh;
+}
+
+.header-cadastro{
+  padding-top: 15vh;
 }
 
 .user-cadastro label,

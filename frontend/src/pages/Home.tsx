@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './Home.css'
-import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
+import { Header } from '../components/RoutesHeader/RoutesHeader'
 
 export function Home() {
 
@@ -21,6 +21,8 @@ export function Home() {
         <>
         <div className="container-home">
 
+            <Header />
+
             <h1 className='header-home'>Bem-vindo à barbearia!</h1>
 
             <div className='about-us'>
@@ -39,6 +41,7 @@ export function Home() {
             <Link to="/agendamento">Agende já o seu horário!</Link>
 
         </div>
+
         </>
     )
 }

@@ -1,10 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './Agendamento.css'
 import { BlocoSelecao } from '../components/BlocoSelecao/BlocoSelecao'
 import { useNavigate } from 'react-router-dom';
-import { FiLogOut } from "react-icons/fi";
 import { apiUrl } from '../config/api';
-import { useEffect } from 'react';
+import { Header } from '../components/RoutesHeader/RoutesHeader';
 
 export function Agendamento () {
 
@@ -54,15 +53,11 @@ export function Agendamento () {
     return (
         <>
         <div className="container-agendamento">
+
+            <Header />
+
             <div className="header-agendamento">
                 <h1>Agende seu horário</h1>
-                <button
-                    className='logout'
-                    onClick={() => {
-                        localStorage.removeItem('currentUser')
-                        redirect('/login')
-                    }}
-                > <FiLogOut /></button>
             </div>
 
             <div className="content-agendamento">

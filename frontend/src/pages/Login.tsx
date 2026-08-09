@@ -5,6 +5,7 @@ import { TbLock } from 'react-icons/tb'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { apiUrl } from '../config/api'
 import { Link } from 'react-router-dom'
+import { Header } from '../components/RoutesHeader/RoutesHeader'
 
 export function Login () {
 
@@ -48,45 +49,51 @@ export function Login () {
         <>
             <div className="login-content">
 
-            <h1>Login</h1>
-            <h2>{location.state?.message}</h2>
+                <Header />
 
-                <div className="login-container">
-                    
-                    <div className='user-login'>
-                        <FaUser/>
-                        <label>Usuário</label>
-                        <input 
-                            type="text"
-                            onChange={(event) => setUser(event.target.value)}
-                            />
-                    </div>
-
-
-                    <div className='password-login'>
-                        <TbLock/>
-                        <label>Senha</label>
-                        <input 
-                            type="password"
-                            onChange={(event) => setPassword(event.target.value)}
-                        />
-                    </div>
-
-                    <div className='no-account'>
-                        <Link to={'/cadastro'}>Não tenho conta</Link>
-                    </div>
-
-
-                    <button 
-                        className='confirm-button'
-                        onClick={handleConfirm}
-                    >Confirmar</button>
-
-                    <div className='confirmacao-login'>
-                        <h2>{confirm}</h2>
-                    </div>
-                    
+                <div className='header-login'>
+                    <h1>Login</h1>
                 </div>
+
+
+                <h2>{location.state?.message}</h2>
+
+                    <div className="login-container">
+                        
+                        <div className='user-login'>
+                            <FaUser/>
+                            <label>Usuário</label>
+                            <input 
+                                type="text"
+                                onChange={(event) => setUser(event.target.value)}
+                                />
+                        </div>
+
+
+                        <div className='password-login'>
+                            <TbLock/>
+                            <label>Senha</label>
+                            <input 
+                                type="password"
+                                onChange={(event) => setPassword(event.target.value)}
+                            />
+                        </div>
+
+                        <div className='no-account'>
+                            <Link to={'/cadastro'}>Não tenho conta</Link>
+                        </div>
+
+
+                        <button 
+                            className='confirm-button'
+                            onClick={handleConfirm}
+                        >Confirmar</button>
+
+                        <div className='confirmacao-login'>
+                            <h2>{confirm}</h2>
+                        </div>
+                        
+                    </div>
 
             </div>
         </>
