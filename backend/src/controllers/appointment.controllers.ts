@@ -33,3 +33,9 @@ export async function createAppointment(request: Request, response: Response) {
         message: `Agendamento realizado com sucesso! Nos vemos no dia ${date} às ${time}.`,
     })
 }
+
+export async function getAppointment(request: Request, response: Response) {
+    const allAppointments = await agendamentos.find().toArray()
+    
+    response.json(allAppointments)
+}
