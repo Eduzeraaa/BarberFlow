@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import './Agendamento.css'
-import { BlocoSelecao } from '../components/BlocoSelecao/BlocoSelecao'
 import { useNavigate } from 'react-router-dom';
 import { apiUrl } from '../config/api';
 import { Header } from '../components/RoutesHeader/RoutesHeader';
@@ -72,7 +71,7 @@ export function Agendamento () {
                     </select>
                 
                     <h2>Barbeiro</h2>
-                    <select className='barber' onChange={(event) => setService(event.target.value)}>
+                    <select className='barber' onChange={(event) => setBarber(event.target.value)}>
                         <option value="José">José</option>
                         <option value="Roberto">Roberto</option>
                         <option value="Cláudio">Cláudio</option>
