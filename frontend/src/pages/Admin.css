@@ -3,14 +3,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 30px;
+    gap: 50px;
     margin-bottom: 40px;
-    padding: 20px;
+    padding-top: 45px;
 }
 
 .header-admin h1 {
     margin: 0;
-    font-size: 28px;
+    font-size: 2.5rem;
     color: #ffffff;
 }
 
@@ -23,10 +23,10 @@
 
 /* Tabela */
 .tabela {
-    width: 90%;
-    max-width: 1000px;
+    width: 100%;
+    max-width: 1200px;
     border-collapse: collapse;
-    background-color: #fff;
+    background-color: #1e1f26;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     overflow: hidden;
@@ -34,53 +34,50 @@
 
 /* Cabeçalho da tabela */
 .titulo-coluna {
-    background-color: #2c3e50;
+    background-color: #2f455c;
     color: white;
 }
 
 .titulo-coluna th {
-    padding: 15px;
+    padding: 25px;
     text-align: center;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 28px;
     letter-spacing: 0.5px;
 }
 
 /* Linhas da tabela */
 .tabela tbody tr {
-    border-bottom: 1px solid #ecf0f1;
+    border-bottom: 1px solid #000000;
     transition: background-color 0.2s;
 }
 
 .tabela tbody tr:hover {
-    background-color: #f8f9fa;
+    background-color: #2b2d36;
 }
 
 .tabela tbody td {
     padding: 15px;
-    font-size: 14px;
-    color: #555;
+    font-size: 22px;
+    color: #8f8f8f;
 }
 
 /* Botão */
-.button-load-apoointments {
+.button-load-appointments {
     padding: 12px 24px;
     border: none;
-    border-radius: 2px;
+    border-radius: 10px;
     background: #424242;
     color: white;
-    box-shadow: 0 1px 0 0 rgba(255, 255, 255, .1) inset,
-        0 0 0 1px rgba(0, 0, 0, .7),
-        0 -1px 0 0 rgba(0, 0, 0, .7) inset,
-        0 1px 2px 1px rgba(0, 0, 0, .6);
+    font-size: 1.1rem;
     cursor: pointer;
     transition: 50ms ease-out;
     font-weight: 600;
 }
 
-.button-load-apoointments:hover,
-.button-load-apoointments:focus,
-.button-load-apoointments:focus-visible {
+.button-load-appointments:hover,
+.button-load-appointments:focus,
+.button-load-appointments:focus-visible {
     background: #353535;
     box-shadow: 0 1px 0 0 rgba(255, 255, 255, .05) inset,
         0 0 0 1px rgba(0, 0, 0, .7),
@@ -90,7 +87,7 @@
     outline: none;
 }
 
-.button-load-apoointments:active {
+.button-load-appointments:active {
     background: #181818;
     box-shadow: 0 0 0 1px rgba(0, 0, 0, .7) inset,
         0 1px 0 0 rgba(255, 255, 255, .05),

@@ -33,7 +33,7 @@ export function Admin () {
 
             <div className="header-admin">
                 <h1>Dados e Estatísticas</h1>
-                <button className='button-load-apoointments' onClick={loadAppointments}>
+                <button className='button-load-appointments' onClick={loadAppointments}>
                     {loading ? 'Carregando...' : 'Carregar Agendamentos'}
                 </button>
             </div>
@@ -43,7 +43,7 @@ export function Admin () {
                 <table className='tabela'>
                 <thead className='titulo-coluna'>
                     <tr>
-                        <th>Usuário</th>
+                        <th>Cliente</th>
                         <th>Serviço</th>
                         <th>Barbeiro</th>
                         <th>Data</th>

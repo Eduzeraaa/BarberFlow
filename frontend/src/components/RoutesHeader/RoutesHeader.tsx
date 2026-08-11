@@ -1,10 +1,8 @@
 import './RoutesHeader.css'
-import { FiLogOut } from "react-icons/fi";
-import { useNavigate } from 'react-router-dom';
+import { Menu } from '../Modal/Menu'
 
 export function Header() {
 
-    const redirect = useNavigate()
 
     return (
 
@@ -16,13 +14,7 @@ export function Header() {
 
                 <h1 className='title'>Barber Flow</h1>
 
-                <button
-                    className='logout'
-                    onClick={() => {
-                    localStorage.removeItem('currentUser')
-                    redirect('/login')
-                    }}
-                > <FiLogOut /></button>
+                <Menu />
 
             </header>
 

@@ -1,0 +1,61 @@
+.menu-container {
+    justify-self: end;
+    padding-right: 20px;
+    position: relative;
+}
+
+.menu-button {
+    background: transparent;
+    font-size: 3rem;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.modal {
+    justify-self: end;
+    padding: 30px;
+    border: none;
+    cursor: pointer;
+    font-size: 3rem;
+}
+
+.side-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    position: absolute;
+    top: 0;
+    right: calc(85% + 20px);
+
+    width: 150px;
+    padding: 18px;
+
+    background: #24252b;
+    border-radius: 8px;
+}
+
+.logout{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.alternativa{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}

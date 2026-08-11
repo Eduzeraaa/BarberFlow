@@ -64,19 +64,20 @@ export function Agendamento () {
 
                 <div className="options-agendamento">
                 
-                    <BlocoSelecao 
-                        titulo="Serviço"
-                        opcoes={['Barba', 'Degradê', 'Social']}
-                        valorSelecionado={service}
-                        aoSelecionar={setService}
-                    />
+                    <h2>Serviço</h2>
+                    <select className='servico' onChange={(event) => setService(event.target.value)}>
+                        <option value="Barba">Barba</option>
+                        <option value="Degradê">Degradê</option>
+                        <option value="Social">Social</option>
+                    </select>
+                
+                    <h2>Barbeiro</h2>
+                    <select className='barber' onChange={(event) => setService(event.target.value)}>
+                        <option value="José">José</option>
+                        <option value="Roberto">Roberto</option>
+                        <option value="Cláudio">Cláudio</option>
+                    </select>
 
-                    <BlocoSelecao
-                        titulo="Barbeiro"
-                        opcoes={['José', 'Roberto', 'Cláudio']}
-                        valorSelecionado={barber}
-                        aoSelecionar={setBarber}
-                    />
 
                     <h2>Data</h2>
                     <input

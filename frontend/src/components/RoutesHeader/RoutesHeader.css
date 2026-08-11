@@ -9,19 +9,10 @@
     align-items: center;
 
     width: 100%;
-    padding: 25px 25px;
+    padding: 35px 25px;
     box-sizing: border-box;
 
     border-bottom: 1px solid #2c2d33;
-}
-
-.logout {
-    justify-self: end;
-
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 3rem;
 }
 
 .logo {
@@ -33,5 +24,5 @@
 .title {
     justify-self: center;
     margin: 0;
-    font-size: 2.8rem;
+    font-size: 4.3rem;
 }
