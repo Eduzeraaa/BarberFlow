@@ -8,7 +8,7 @@ export async function signup(request: Request, response: Response) {
     const searchResult = await users.findOne({user})
     
     if (searchResult === null){
-        await users.insertOne({user, password})
+        await users.insertOne({user, role:'cliente', password})
         response.json({
             message: 'Cadastro realizado!',
         })
@@ -36,6 +36,7 @@ export async function login(request: Request, response: Response) {
         response.json({
             message: 'Login efetuado com sucesso!',
             user: searchResult.user,
+            role: searchResult.role,
         })
     }
 }

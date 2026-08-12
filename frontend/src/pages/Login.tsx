@@ -33,6 +33,7 @@ export function Login () {
         const data = await response.json()
 
         localStorage.setItem('currentUser', data.user) // localStorage é uma memória do navegador que guarda dados mesmo depois que a página é recarregada
+        localStorage.setItem('userRole', data.role)
         
         if (data.message === 'Login efetuado com sucesso!'){
             redirect('/agendamento')

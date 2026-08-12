@@ -65,6 +65,7 @@ export function Agendamento () {
 
                     <h2 className='subtitle'>Serviço</h2>
                     <select className='servico' onChange={(event) => setService(event.target.value)}>
+                        <option value="escolha-service">Escolha um serviço:</option>
                         <option value="Barba">Barba</option>
                         <option value="Degradê">Degradê</option>
                         <option value="Social">Social</option>
@@ -72,6 +73,7 @@ export function Agendamento () {
                 
                     <h2 className='subtitle'>Barbeiro</h2>
                     <select className='barber' onChange={(event) => setBarber(event.target.value)}>
+                        <option value="escolha-barber">Escolha um barbeiro:</option>
                         <option value="José">José</option>
                         <option value="Roberto">Roberto</option>
                         <option value="Cláudio">Cláudio</option>
@@ -88,6 +90,7 @@ export function Agendamento () {
 
                     <h2 className='subtitle'>Horário</h2>
                     <select className='horario' name="horario" onChange={(event) => setTime(event.target.value)}>
+                        <option value="escolha-time">Escolha um horário:</option>
                         <option value="08:00">08:00</option>
                         <option value='08:30'>08:30</option>
                         <option value='09:00'>09:00</option>

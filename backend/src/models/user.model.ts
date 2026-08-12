@@ -1,5 +1,6 @@
 interface User {
     user: string,
+    role: string,
     password: string,
 }
 

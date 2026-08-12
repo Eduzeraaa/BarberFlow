@@ -4,7 +4,7 @@ import { agendamentos } from '../config/database.js'
 export async function createAppointment(request: Request, response: Response) {
     const { user, service, barber, date, time } = request.body
 
-    if (user === null || service === undefined || barber === undefined || date === undefined || time === undefined){
+    if (user === null || service === undefined || barber === undefined || date === undefined || time === undefined || service === '' || barber === ''){
         response.json({
             message: 'Falta alguma informação! Confira novamente seu agendamento.',
         })
@@ -26,7 +26,8 @@ export async function createAppointment(request: Request, response: Response) {
         service,
         barber,
         date,
-        time
+        time,
+        status: 'marcado'
     })
 
     response.json({
@@ -38,4 +39,25 @@ export async function getAppointment(request: Request, response: Response) {
     const allAppointments = await agendamentos.find().toArray()
     
     response.json(allAppointments)
+}
+
+export async function cancelAppointment(request: Request, response: Response) {
+    const { barber, date, time } = request.body
+
+    const appointment = await agendamentos.findOne({ barber, date, time })
+
+    if (appointment === null) {
+        return response.json({
+            message: 'Agendamento não encontrado'
+        })
+    }
+
+    await agendamentos.updateOne(
+        { barber, date, time },
+        { $set: { status: 'cancelado' } }
+    )
+
+    return response.json({
+        message: `Agendamento de ${appointment.user} cancelado com sucesso!`
+    })
 }
