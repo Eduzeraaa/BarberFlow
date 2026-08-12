@@ -62,23 +62,22 @@ export function Agendamento () {
             <div className="content-agendamento">
 
                 <div className="options-agendamento">
-                
-                    <h2>Serviço</h2>
+
+                    <h2 className='subtitle'>Serviço</h2>
                     <select className='servico' onChange={(event) => setService(event.target.value)}>
                         <option value="Barba">Barba</option>
                         <option value="Degradê">Degradê</option>
                         <option value="Social">Social</option>
                     </select>
                 
-                    <h2>Barbeiro</h2>
+                    <h2 className='subtitle'>Barbeiro</h2>
                     <select className='barber' onChange={(event) => setBarber(event.target.value)}>
                         <option value="José">José</option>
                         <option value="Roberto">Roberto</option>
                         <option value="Cláudio">Cláudio</option>
                     </select>
 
-
-                    <h2>Data</h2>
+                    <h2 className='subtitle'>Data</h2>
                     <input
                         className='botao-data'
                         type="date"
@@ -87,7 +86,7 @@ export function Agendamento () {
                         onChange={(event) => setDate(event.target.value)}
                     />
 
-                    <h2>Horário</h2>
+                    <h2 className='subtitle'>Horário</h2>
                     <select className='horario' name="horario" onChange={(event) => setTime(event.target.value)}>
                         <option value="08:00">08:00</option>
                         <option value='08:30'>08:30</option>
@@ -108,7 +107,7 @@ export function Agendamento () {
                     </select>
                             
                     <button 
-                        className='botao-confirmacao-resumo'
+                        className='botao-confirmacao'
                         onClick={handleConfirm}
                     >Confirmar agendamento</button>
 

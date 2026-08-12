@@ -36,26 +36,16 @@
     border-radius: 8px;
 }
 
-.logout{
-    display: flex;
-    justify-content: center;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.9rem;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-}
-
+.logout,
 .alternativa{
     display: flex;
     justify-content: center;
     flex-direction: row;
     align-items: center;
     gap: 8px;
-    font-size: 0.9rem;
+    font-size: 1rem;
     background: transparent;
     border: none;
     cursor: pointer;
 }
+

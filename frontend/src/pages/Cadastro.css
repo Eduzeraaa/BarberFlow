@@ -8,12 +8,12 @@
 .cadastro-container{
     display: flex;
     flex-direction: column;
-    /* border: 1px solid red; */
     gap: 3vh;
 }
 
 .header-cadastro{
   padding-top: 15vh;
+  padding-bottom: 5vh;
 }
 
 .user-cadastro label,
@@ -28,7 +28,9 @@
 .password-confirm {
   display: flex;
   align-items: center;
-  gap: 1vh;
+  gap: 4vh;
+  font-size: 2vh;
+  padding-bottom: 3vh;
 }
 
 .confirm-button {
@@ -69,4 +71,12 @@
 .confirm-button:hover {
   border-color: #666666;
   background: #292929;
+}
+
+.user-input-signup{
+  font-size: 1.8vh;
+}
+
+.password-input-signup{
+  font-size: 1.8vh;
 }

@@ -64,6 +64,7 @@ export function Login () {
                             <FaUser/>
                             <label>Usuário</label>
                             <input 
+                                className='user-input-login'
                                 type="text"
                                 onChange={(event) => setUser(event.target.value)}
                                 />
@@ -73,7 +74,8 @@ export function Login () {
                         <div className='password-login'>
                             <TbLock/>
                             <label>Senha</label>
-                            <input 
+                            <input
+                                className='password-input-login'
                                 type="password"
                                 onChange={(event) => setPassword(event.target.value)}
                             />

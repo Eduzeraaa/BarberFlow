@@ -19,7 +19,7 @@
 }
 
 /* From Uiverse.io by gharsh11032000 */ 
-.botao-confirmacao-resumo {
+.botao-confirmacao {
   width: 280px;
   border-radius: 8px;
   border: 1px solid transparent;
@@ -34,12 +34,12 @@
   border-color: #777986;
 }
 
-.botao-confirmacao-resumo:hover {
+.botao-confirmacao:hover {
   border-color: #646cff;
 }
 
-.botao-confirmacao-resumo:focus,
-.botao-confirmacao-resumo:focus-visible {
+.botao-confirmacao:focus,
+.botao-confirmacao:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
@@ -83,4 +83,8 @@
     border-radius: 15px;
     font-size: 20px;
     padding: 0 16px;
+}
+
+.subtitle{
+    font-size: 2.8vh;
 }

@@ -24,20 +24,23 @@
 .user-login{
     display: flex;
     flex-direction: row;
-    gap: 1vh;
+    gap: 4vh;
     align-items: center;
+    font-size: 2vh;
 }
 
 .password-login{
     display: flex;
     flex-direction: row;
-    gap:1vh;
+    gap: 4vh;
     align-items: center;
+    font-size: 2vh;
 }
 
 .no-account{
   display: flex;
   flex-direction: row;
+  font-size: 22px;
 }
 
 .confirm-button {
@@ -78,4 +81,12 @@
 .confirm-button:hover {
   border-color: #666666;
   background: #292929;
+}
+
+.user-input-login{
+  font-size: 1.8vh;
+}
+
+.password-input-login{
+  font-size: 1.8vh;
 }

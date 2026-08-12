@@ -1,5 +1,5 @@
 import './RoutesHeader.css'
-import { Menu } from '../Modal/Menu'
+import { Menu } from '../Menu/Menu'
 
 export function Header() {
 

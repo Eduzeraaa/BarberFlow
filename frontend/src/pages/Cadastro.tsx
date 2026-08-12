@@ -75,6 +75,7 @@ export function Cadastro () {
                             <FaUser/>
                             <label>Usuário</label>
                             <input 
+                                className='user-input-signup'
                                 type="text"
                                 placeholder='Nome de usuário'
                                 onChange={(event) => setUser(event.target.value)}
@@ -85,7 +86,8 @@ export function Cadastro () {
                         <div className='password-cadastro'>
                             <TbLock/>
                             <label>Senha</label>
-                            <input 
+                            <input
+                                className='password-input-signup'
                                 type="password"
                                 placeholder='Mínimo 8 caracteres'
                                 onChange={(event) => setPassword(event.target.value)}
@@ -95,7 +97,8 @@ export function Cadastro () {
                         <div className='password-confirm'>
                             <TbLock />
                             <label>Confirmar Senha</label>
-                            <input 
+                            <input
+                                className='password-input-signup'
                                 type="password"
                                 placeholder='Confirme sua senha'
                                 onChange={(event) => setPasswordConfirm(event.target.value)}
