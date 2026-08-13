@@ -1,6 +1,6 @@
 import './Login.css'
 import { useState } from 'react'
-import { FaUser } from 'react-icons/fa'
+import { FiLogIn } from "react-icons/fi";
 import { TbLock } from 'react-icons/tb' 
 import { useNavigate, useLocation } from 'react-router-dom'
 import { apiUrl } from '../config/api'
@@ -9,7 +9,7 @@ import { Header } from '../components/RoutesHeader/RoutesHeader'
 
 export function Login () {
 
-    const [user, setUser] = useState('')
+    const [login, setLogin] = useState('')
     const [password, setPassword] = useState('')
     const [confirm, setConfirm] = useState('')
 
@@ -25,15 +25,16 @@ export function Login () {
                 'Content-type': 'application/json'
             },
             body: JSON.stringify({
-                user,
-                password
+                userOrPhone: login,
+                password,
             })
         })
         
         const data = await response.json()
 
-        localStorage.setItem('currentUser', data.user) // localStorage é uma memória do navegador que guarda dados mesmo depois que a página é recarregada
+        localStorage.setItem('currentUser', data.user)
         localStorage.setItem('userRole', data.role)
+        localStorage.setItem('userPhone', data.phone)
         
         if (data.message === 'Login efetuado com sucesso!'){
             redirect('/agendamento')
@@ -62,12 +63,13 @@ export function Login () {
                     <div className="login-container">
                         
                         <div className='user-login'>
-                            <FaUser/>
-                            <label>Usuário</label>
+                            <FiLogIn />
+                            <label>Login</label>
                             <input 
                                 className='user-input-login'
                                 type="text"
-                                onChange={(event) => setUser(event.target.value)}
+                                placeholder='Nome ou Telefone'
+                                onChange={(event) => setLogin(event.target.value)}
                                 />
                         </div>
 

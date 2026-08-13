@@ -16,6 +16,7 @@ export function Agendamento () {
     const redirect = useNavigate()
 
     const currentUser = localStorage.getItem('currentUser')
+    const userPhone = localStorage.getItem('userPhone')
     
     useEffect(() => {
         
@@ -36,6 +37,7 @@ export function Agendamento () {
             },
             body: JSON.stringify({
                 user: currentUser,
+                phone: userPhone,
                 service,
                 barber,
                 date,

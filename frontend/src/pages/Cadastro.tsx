@@ -2,15 +2,17 @@ import './Cadastro.css'
 import { useState } from 'react'
 import { FaUser } from 'react-icons/fa'
 import { TbLock } from 'react-icons/tb' 
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { apiUrl } from '../config/api'
 import { Header } from '../components/RoutesHeader/RoutesHeader'
+import { BsWhatsapp } from "react-icons/bs";
 
 export function Cadastro () {
 
     const [user, setUser] = useState('')
     const [password, setPassword] = useState('')
     const [passwordConfirm, setPasswordConfirm] = useState('')
+    const [phone, setPhone] = useState('')
     const [confirm, setConfirm] = useState('')
 
     const redirect = useNavigate()
@@ -20,12 +22,12 @@ export function Cadastro () {
     async function handleConfirm() {
         if (password.length < 8){
             setError('Sua senha contém menos que 8 caracteres.')
-            return // fim da funçao
+            return
         }
         
         else if (password !== passwordConfirm) {
             setError('Senhas diferentes!')
-            return // fim da funçao
+            return
         }
 
         setError('')
@@ -37,7 +39,8 @@ export function Cadastro () {
             },
             body: JSON.stringify({
                 user,
-                password
+                password,
+                phone
             })
         })
 
@@ -73,12 +76,23 @@ export function Cadastro () {
                         
                         <div className='user-cadastro'>
                             <FaUser/>
-                            <label>Usuário</label>
+                            <label>Nome</label>
                             <input 
                                 className='user-input-signup'
                                 type="text"
-                                placeholder='Nome de usuário'
+                                placeholder='Nome'
                                 onChange={(event) => setUser(event.target.value)}
+                            />
+                        </div>
+
+                        <div className='telefone-cadastro'>
+                            <BsWhatsapp />
+                            <label>Telefone</label>
+                            <input 
+                                className='user-number-signup'
+                                type="text"
+                                placeholder='Telefone para contato'
+                                onChange={(event) => setPhone(event.target.value)}
                             />
                         </div>
 
@@ -103,6 +117,10 @@ export function Cadastro () {
                                 placeholder='Confirme sua senha'
                                 onChange={(event) => setPasswordConfirm(event.target.value)}
                             />
+                        </div>
+
+                        <div className='to-login'>
+                            <Link to={'/login'}>Já tenho conta</Link>
                         </div>
 
 

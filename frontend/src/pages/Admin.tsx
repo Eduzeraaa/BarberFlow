@@ -6,13 +6,14 @@ import { useNavigate } from 'react-router-dom'
 import { MdCancel } from "react-icons/md";
 
 interface Appointment {
-    _id: string
-    user: string
-    service: string
-    barber: string
-    date: string
-    time: string
-    status?: string
+    _id: string,
+    user: string,
+    phone: string,
+    service: string,
+    barber: string,
+    date: string,
+    time: string,
+    status?: boolean,
 }
 
 export function Admin () {
@@ -47,7 +48,7 @@ export function Admin () {
         const response = await fetch(`${apiUrl}/buscarAgendamentos`)
         const data = await response.json()
 
-        const appointmentsAtivos = data.filter((app: Appointment) => app.status !== 'cancelado')
+        const appointmentsAtivos = data.filter((app: Appointment) => app.status !== false)
         setAppointments(appointmentsAtivos)
         setLoading(false)
 
@@ -107,6 +108,7 @@ export function Admin () {
                             <th>Barbeiro</th>
                             <th>Data</th>
                             <th>Horário</th>
+                            <th>Telefone</th>
                             <th></th>
                         </tr>
 
@@ -123,6 +125,7 @@ export function Admin () {
                                 <td>{appointment.barber}</td>
                                 <td>{appointment.date}</td>
                                 <td>{appointment.time}</td>
+                                <td>{appointment.phone}</td>
 
                                 <td>
 

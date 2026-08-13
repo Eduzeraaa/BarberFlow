@@ -12,11 +12,19 @@
 }
 
 .header-cadastro{
-  padding-top: 15vh;
+  padding-top: 10vh;
   padding-bottom: 5vh;
 }
 
+.to-login {
+  display: flex;
+  flex-direction: row;
+  font-size: 22px;
+}
+
+
 .user-cadastro label,
+.telefone-cadastro label,
 .password-cadastro label,
 .password-confirm label {
   width: 120px;
@@ -24,6 +32,7 @@
 }
 
 .user-cadastro,
+.telefone-cadastro,
 .password-cadastro,
 .password-confirm {
   display: flex;
@@ -73,10 +82,8 @@
   background: #292929;
 }
 
-.user-input-signup{
-  font-size: 1.8vh;
-}
-
-.password-input-signup{
+.user-input-signup,
+.password-input-signup,
+.user-number-signup {
   font-size: 1.8vh;
 }

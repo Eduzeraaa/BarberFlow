@@ -2,9 +2,9 @@ import type { Request, Response } from 'express'
 import { agendamentos } from '../config/database.js'
 
 export async function createAppointment(request: Request, response: Response) {
-    const { user, service, barber, date, time } = request.body
+    const { user, phone, service, barber, date, time } = request.body
 
-    if (user === null || service === undefined || barber === undefined || date === undefined || time === undefined || service === '' || barber === ''){
+    if (user === null || phone === null || service === undefined || barber === undefined || date === undefined || time === undefined || service === '' || barber === ''){
         response.json({
             message: 'Falta alguma informação! Confira novamente seu agendamento.',
         })
@@ -23,11 +23,12 @@ export async function createAppointment(request: Request, response: Response) {
 
     await agendamentos.insertOne({
         user,
+        phone,
         service,
         barber,
         date,
         time,
-        status: 'marcado'
+        status: true
     })
 
     response.json({
@@ -54,7 +55,7 @@ export async function cancelAppointment(request: Request, response: Response) {
 
     await agendamentos.updateOne(
         { barber, date, time },
-        { $set: { status: 'cancelado' } }
+        { $set: { status: false } }
     )
 
     return response.json({
