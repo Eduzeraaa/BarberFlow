@@ -84,8 +84,9 @@ export function Login () {
                             />
                         </div>
 
-                        <div className='no-account'>
+                        <div className='links'>
                             <Link to={'/cadastro'}>Não tenho conta</Link>
+                            <Link to={'/recovery'}>Esqueci a senha</Link>
                         </div>
 
 

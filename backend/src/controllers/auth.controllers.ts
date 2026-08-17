@@ -1,16 +1,28 @@
 import type { Request, Response } from 'express'
+import bcrypt from 'bcrypt'
 import { users } from '../config/database.js'
 
 export async function signup(request: Request, response: Response) {
 
     const {user, password, phone} = request.body
 
+    if (!user || !password || !phone) {
+        return response.json({
+            message: 'Informe nome, telefone e senha.'
+        })
+    }
+
     const searchResult = await users.findOne({
         $or: [{ user }, { phone }]
     })
-    
+
     if (searchResult === null){
-        await users.insertOne({user, role:'cliente', password, phone})
+
+        const saltRounds = 10
+
+        const hashPassword = await bcrypt.hash(password, saltRounds)
+
+        await users.insertOne({user, role:'cliente', password: hashPassword, phone})
         response.json({
             message: 'Cadastro realizado!',
         })
@@ -33,23 +45,27 @@ export async function login(request: Request, response: Response) {
     const { userOrPhone, password } = request.body
 
     const searchResult = await users.findOne({
-        $or: 
-        [{ user: userOrPhone },{ phone: userOrPhone }],
-        password: password
+        $or: [{ user: userOrPhone }, { phone: userOrPhone }]
     })
 
-    if (searchResult === null){
-        response.json({
+    if (searchResult === null) {
+        return response.json({
             message: 'Login ou senha incorretos.',
         })
     }
 
-    else{
-        response.json({
-            message: 'Login efetuado com sucesso!',
-            user: searchResult.user,
-            role: searchResult.role,
-            phone: searchResult.phone
+    const passwordMatch = await bcrypt.compare(password, searchResult.password)
+
+    if (!passwordMatch) {
+        return response.json({
+            message: 'Login ou senha incorretos.',
         })
     }
+
+    response.json({
+        message: 'Login efetuado com sucesso!',
+        user: searchResult.user,
+        role: searchResult.role,
+        phone: searchResult.phone
+    })
 }

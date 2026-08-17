@@ -37,9 +37,10 @@
     font-size: 2vh;
 }
 
-.no-account{
+.links{
   display: flex;
   flex-direction: row;
+  gap: 12.5vh;
   font-size: 22px;
 }
 

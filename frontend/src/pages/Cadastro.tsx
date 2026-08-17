@@ -5,7 +5,7 @@ import { TbLock } from 'react-icons/tb'
 import { useNavigate, Link } from 'react-router-dom'
 import { apiUrl } from '../config/api'
 import { Header } from '../components/RoutesHeader/RoutesHeader'
-import { BsWhatsapp } from "react-icons/bs";
+import { FaPhoneAlt } from "react-icons/fa";
 
 export function Cadastro () {
 
@@ -86,7 +86,7 @@ export function Cadastro () {
                         </div>
 
                         <div className='telefone-cadastro'>
-                            <BsWhatsapp />
+                            <FaPhoneAlt />
                             <label>Telefone</label>
                             <input 
                                 className='user-number-signup'

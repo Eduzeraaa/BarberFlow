@@ -1,0 +1,96 @@
+.recovery-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5vh;
+}
+
+.recovery-header {
+    padding-top: 10vh;
+    padding-bottom: 5vh;
+}
+
+.recovery-header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    color: #ffffff;
+}
+
+.recovery-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+}
+
+.telefone-recovery label,
+.code-recovery label,
+.password-recovery label,
+.password-confirm-recovery label {
+    width: 120px;
+    text-align: left;
+}
+
+.telefone-recovery,
+.code-recovery,
+.password-recovery,
+.password-confirm-recovery {
+    display: flex;
+    align-items: center;
+    gap: 4vh;
+    font-size: 2vh;
+    padding-bottom: 3vh;
+}
+
+.user-number-recovery,
+.code-recovery input,
+.password-recovery input,
+.password-confirm-recovery input {
+    font-size: 1.8vh;
+}
+
+button {
+    padding: 15px 30px;
+    border: 2px solid #2c2c2c;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: 30px;
+    transition: all 0.4s ease;
+    outline: none;
+    position: relative;
+    overflow: hidden;
+    font-weight: bold;
+}
+
+button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.25) 0%,
+        rgba(255, 255, 255, 0) 70%
+    );
+    transform: scale(0);
+    transition: transform 0.3s ease;
+}
+
+button:hover::after {
+    transform: scale(4);
+}
+
+button:hover {
+    border-color: #666666;
+    background: #292929;
+}
+
+.recovery-message {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #cccccc;
+    margin-top: 2vh;
+}
