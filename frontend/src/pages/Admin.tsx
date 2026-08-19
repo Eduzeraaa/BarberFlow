@@ -4,6 +4,7 @@ import { apiUrl } from "../config/api"
 import './Admin.css'
 import { useNavigate } from 'react-router-dom'
 import { MdCancel } from "react-icons/md";
+import { useUser } from '../context/UserContext'
 
 interface Appointment {
     _id: string,
@@ -18,6 +19,8 @@ interface Appointment {
 
 export function Admin () {
 
+    const { user } = useUser()
+
     const [appointments, setAppointments] = useState<Appointment[]>([])
     const [loading, setLoading] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
@@ -26,20 +29,19 @@ export function Admin () {
 
     const redirect = useNavigate()
 
-    const currentUser = localStorage.getItem('currentUser')
-    const userRole = localStorage.getItem('userRole')
+    const userRole = user?.role
         
     useEffect(() => {
         
-        if (currentUser === null){
+        if (user === null){
             redirect('/login')
         }
 
-        if (currentUser !== null && userRole !== 'admin'){
+        if (user !== null && userRole !== 'admin'){
             redirect('/agendamento')
         }
 
-    })
+    }, [user, redirect])
 
     async function loadAppointments() {
 

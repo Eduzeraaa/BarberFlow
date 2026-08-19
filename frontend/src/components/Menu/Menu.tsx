@@ -4,6 +4,7 @@ import { FiMenu, FiLogOut } from 'react-icons/fi'
 import { RiCalendarScheduleFill } from 'react-icons/ri'
 import { MdAdminPanelSettings } from 'react-icons/md'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { apiUrl } from '../../config/api'
 
 export function Menu() {
 
@@ -20,6 +21,13 @@ export function Menu() {
         return null
     }
 
+    async function handleLogout() {
+        await fetch(`${apiUrl}/logout`, {
+            method: 'POST'
+        })
+        redirect('/login')
+    }
+
     return (
 
         <div className="menu-container">
@@ -34,10 +42,7 @@ export function Menu() {
 
                     <button
                         className="logout"
-                        onClick={() => {
-                            localStorage.removeItem('currentUser')
-                            redirect('/login')
-                        }}
+                        onClick={handleLogout}
                     >Logout <FiLogOut /></button>
 
                     {location.pathname === '/admin' && (

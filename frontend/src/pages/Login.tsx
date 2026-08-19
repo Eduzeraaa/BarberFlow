@@ -31,10 +31,6 @@ export function Login () {
         })
         
         const data = await response.json()
-
-        localStorage.setItem('currentUser', data.user)
-        localStorage.setItem('userRole', data.role)
-        localStorage.setItem('userPhone', data.phone)
         
         if (data.message === 'Login efetuado com sucesso!'){
             redirect('/agendamento')

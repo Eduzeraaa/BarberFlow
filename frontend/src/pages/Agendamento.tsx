@@ -3,8 +3,11 @@ import './Agendamento.css'
 import { useNavigate } from 'react-router-dom';
 import { apiUrl } from '../config/api';
 import { Header } from '../components/RoutesHeader/RoutesHeader';
+import { useUser } from '../context/UserContext'
 
 export function Agendamento () {
+
+    const { user } = useUser()
 
     const [service, setService] = useState('')
     const [barber, setBarber] = useState('')
@@ -15,16 +18,14 @@ export function Agendamento () {
     const hoje = new Date().toISOString().split('T')[0]
     const redirect = useNavigate()
 
-    const currentUser = localStorage.getItem('currentUser')
-    const userPhone = localStorage.getItem('userPhone')
+    
+    const userPhone = user?.phone
     
     useEffect(() => {
-        
-        if (currentUser === null){
+        if (user === null){
             redirect('/login')
         }
-
-    })
+    }, [user, redirect])
 
 
     async function handleConfirm() {
@@ -36,7 +37,7 @@ export function Agendamento () {
                 'Content-type': 'application/json'
             },
             body: JSON.stringify({
-                user: currentUser,
+                user: user?.user,
                 phone: userPhone,
                 service,
                 barber,
