@@ -6,15 +6,15 @@ import { useUser } from '../context/UserContext'
 
 export function Home() {
 
-    const { user } = useUser()
+    const { user, loading } = useUser()
 
     const redirect = useNavigate()
-    
+
     useEffect(() => {
-        if (user === null){
+        if (!loading && user === null){
             redirect('/login')
         }
-    }, [user, redirect])
+    }, [user, loading, redirect])
 
     return (
         <>

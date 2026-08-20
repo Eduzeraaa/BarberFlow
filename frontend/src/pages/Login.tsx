@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { apiUrl } from '../config/api'
 import { Link } from 'react-router-dom'
 import { Header } from '../components/RoutesHeader/RoutesHeader'
+import { useUser } from '../context/UserContext'
 
 export function Login () {
 
@@ -15,6 +16,7 @@ export function Login () {
 
     const redirect = useNavigate()
     const location = useLocation()
+    const { refreshUser } = useUser()
 
     
     async function handleConfirm() {
@@ -24,6 +26,7 @@ export function Login () {
             headers: {
                 'Content-type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({
                 userOrPhone: login,
                 password,
@@ -31,8 +34,9 @@ export function Login () {
         })
         
         const data = await response.json()
-        
+
         if (data.message === 'Login efetuado com sucesso!'){
+            await refreshUser()
             redirect('/agendamento')
         }
 

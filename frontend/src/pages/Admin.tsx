@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { MdCancel } from "react-icons/md";
 import { useUser } from '../context/UserContext'
 
-interface Appointment {
+export interface Appointment {
     _id: string,
     user: string,
     phone: string,
@@ -19,7 +19,7 @@ interface Appointment {
 
 export function Admin () {
 
-    const { user } = useUser()
+    const { user, loading: loadingUser } = useUser()
 
     const [appointments, setAppointments] = useState<Appointment[]>([])
     const [loading, setLoading] = useState(false)
@@ -32,7 +32,11 @@ export function Admin () {
     const userRole = user?.role
         
     useEffect(() => {
-        
+
+        if (loadingUser) {
+            return
+        }
+
         if (user === null){
             redirect('/login')
         }
@@ -41,13 +45,13 @@ export function Admin () {
             redirect('/agendamento')
         }
 
-    }, [user, redirect])
+    }, [user, userRole, loadingUser, redirect])
 
     async function loadAppointments() {
 
         setLoading(true)
 
-        const response = await fetch(`${apiUrl}/buscarAgendamentos`)
+        const response = await fetch(`${apiUrl}/buscarAgendamentos`, {credentials: 'include'})
         const data = await response.json()
 
         const appointmentsAtivos = data.filter((app: Appointment) => app.status !== false)
@@ -63,6 +67,7 @@ export function Admin () {
             headers: {
                 'Content-type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({
                 barber,
                 date,

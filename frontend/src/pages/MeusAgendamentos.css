@@ -1,0 +1,86 @@
+/* Header da página */
+.header-meus-agendamentos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+    margin-bottom: 40px;
+    padding-top: 45px;
+}
+
+.header-meus-agendamentos h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    color: #ffffff;
+}
+
+/* Container da tabela */
+.content-meus-agendamentos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 60px;
+}
+
+.subtitulo-meus-agendamentos {
+    margin: 20px 0 0;
+    font-size: 1.8rem;
+    color: #ffffff;
+}
+
+.aviso-meus-agendamentos {
+    font-size: 1.3rem;
+    color: #8f8f8f;
+}
+
+/* Tabela */
+.tabela {
+    width: 100%;
+    max-width: 1200px;
+    border-collapse: collapse;
+    background-color: #1e1f26;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Cabeçalho da tabela */
+.titulo-coluna {
+    background-color: #2f455c;
+    color: white;
+}
+
+.titulo-coluna th {
+    padding: 25px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 28px;
+    letter-spacing: 0.5px;
+}
+
+/* Linhas da tabela */
+.tabela tbody tr {
+    border-bottom: 1px solid #000000;
+    transition: background-color 0.2s;
+}
+
+.tabela tbody tr:hover {
+    background-color: #2b2d36;
+}
+
+.tabela tbody td {
+    padding: 15px;
+    text-align: center;
+    font-size: 22px;
+    color: #8f8f8f;
+}
+
+/* Agendamentos que já passaram ficam mais apagados */
+.tabela-anteriores {
+    opacity: 0.6;
+}
+
+.tabela-anteriores .titulo-coluna {
+    background-color: #3a3c47;
+}

@@ -27,6 +27,7 @@ export function Recuperar() {
         const response = await fetch(`${apiUrl}/recovery/request`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({ phone })
         })
 
@@ -54,6 +55,7 @@ export function Recuperar() {
         const response = await fetch(`${apiUrl}/recovery/reset`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({ 
                 phone, 
                 code, 

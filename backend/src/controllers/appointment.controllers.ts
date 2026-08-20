@@ -2,9 +2,16 @@ import type { Request, Response } from 'express'
 import { agendamentos } from '../config/database.js'
 
 export async function createAppointment(request: Request, response: Response) {
-    const { user, phone, service, barber, date, time } = request.body
+    const { service, barber, date, time } = request.body
+    
+    if (!request.user) {
+        return response.status(401).json({ message: 'Não autenticado' })
+    }
 
-    if (user === null || phone === null || service === undefined || barber === undefined || date === undefined || time === undefined || service === '' || barber === ''){
+    const user = request.user?.user
+    const phone = request.user?.phone
+
+    if (service === undefined || barber === undefined || date === undefined || time === undefined || service === '' || barber === ''){
         response.json({
             message: 'Falta alguma informação! Confira novamente seu agendamento.',
         })
@@ -61,4 +68,18 @@ export async function cancelAppointment(request: Request, response: Response) {
     return response.json({
         message: `Agendamento de ${appointment.user} cancelado com sucesso!`
     })
+}
+
+export async function getMyAppointments(request: Request, response: Response) {
+
+    if (!request.user?.phone) {
+        return response.status(401).json({ message: 'Não autenticado' })
+    }
+    
+    const phone = request.user.phone
+    
+    const myAppointments = await agendamentos.find({ phone }).toArray()
+
+    response.json(myAppointments)
+
 }

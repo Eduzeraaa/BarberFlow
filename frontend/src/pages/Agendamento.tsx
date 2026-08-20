@@ -7,7 +7,7 @@ import { useUser } from '../context/UserContext'
 
 export function Agendamento () {
 
-    const { user } = useUser()
+    const { user, loading } = useUser()
 
     const [service, setService] = useState('')
     const [barber, setBarber] = useState('')
@@ -22,10 +22,10 @@ export function Agendamento () {
     const userPhone = user?.phone
     
     useEffect(() => {
-        if (user === null){
+        if (!loading && user === null){
             redirect('/login')
         }
-    }, [user, redirect])
+    }, [user, loading, redirect])
 
 
     async function handleConfirm() {
@@ -36,6 +36,7 @@ export function Agendamento () {
             headers: {
                 'Content-type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({
                 user: user?.user,
                 phone: userPhone,
