@@ -1,86 +1,43 @@
-/* Header da página */
+/* A tabela em si (.tabela / .titulo-coluna) é estilizada em Admin.css.
+   Aqui ficam só os detalhes desta página. */
+
 .header-meus-agendamentos {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 50px;
-    margin-bottom: 40px;
-    padding-top: 45px;
+    padding: var(--space-7) var(--space-5) var(--space-6);
 }
 
 .header-meus-agendamentos h1 {
-    margin: 0;
-    font-size: 2.5rem;
-    color: #ffffff;
+    font-size: var(--text-3xl);
 }
 
-/* Container da tabela */
 .content-meus-agendamentos {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
-    padding-bottom: 60px;
+
+    width: 100%;
+    padding: 0 var(--space-5) var(--space-8);
 }
 
 .subtitulo-meus-agendamentos {
-    margin: 20px 0 0;
-    font-size: 1.8rem;
-    color: #ffffff;
+    align-self: flex-start;
+    margin: var(--space-6) 0 var(--space-3);
+
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--text-strong);
+}
+
+.subtitulo-meus-agendamentos:first-child {
+    margin-top: 0;
 }
 
 .aviso-meus-agendamentos {
-    font-size: 1.3rem;
-    color: #8f8f8f;
-}
-
-/* Tabela */
-.tabela {
-    width: 100%;
-    max-width: 1200px;
-    border-collapse: collapse;
-    background-color: #1e1f26;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-/* Cabeçalho da tabela */
-.titulo-coluna {
-    background-color: #2f455c;
-    color: white;
-}
-
-.titulo-coluna th {
-    padding: 25px;
-    text-align: center;
-    font-weight: 600;
-    font-size: 28px;
-    letter-spacing: 0.5px;
-}
-
-/* Linhas da tabela */
-.tabela tbody tr {
-    border-bottom: 1px solid #000000;
-    transition: background-color 0.2s;
-}
-
-.tabela tbody tr:hover {
-    background-color: #2b2d36;
-}
-
-.tabela tbody td {
-    padding: 15px;
-    text-align: center;
-    font-size: 22px;
-    color: #8f8f8f;
+    padding: var(--space-7) var(--space-5);
+    font-size: var(--text-base);
+    color: var(--text-muted);
 }
 
 /* Agendamentos que já passaram ficam mais apagados */
 .tabela-anteriores {
     opacity: 0.6;
-}
-
-.tabela-anteriores .titulo-coluna {
-    background-color: #3a3c47;
 }

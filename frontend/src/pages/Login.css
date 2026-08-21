@@ -1,93 +1,118 @@
-.login-content{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2.5vh;
+.login-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
-.login-container{
-    display: flex;
-    flex-direction: column;
-    gap: 3vh;
+.header-login {
+  padding: var(--space-8) var(--space-5) var(--space-6);
 }
 
-.header-login{
-  padding-top: 15vh;
+.header-login h1 {
+  font-size: var(--text-3xl);
+}
+
+/* o h2 da mensagem de redirect fica vazio na maioria das visitas */
+.login-content > h2:empty,
+.confirmacao-login h2:empty {
+  display: none;
+}
+
+.login-content > h2 {
+  margin: 0 auto var(--space-5);
+  max-width: 420px;
+  padding: var(--space-3) var(--space-4);
+
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--success);
+
+  background: rgba(74, 222, 128, 0.1);
+  border-left: 3px solid var(--success);
+  border-radius: var(--radius-sm);
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto var(--space-8);
+  padding: var(--space-6);
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.user-login,
+.password-login {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.user-login svg,
+.password-login svg {
+  flex-shrink: 0;
+  font-size: 1.05rem;
+  color: var(--text-muted);
 }
 
 .user-login label,
 .password-login label {
-  width: 60px;
+  width: 62px;
+  flex-shrink: 0;
   text-align: left;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text);
 }
 
-.user-login{
-    display: flex;
-    flex-direction: row;
-    gap: 4vh;
-    align-items: center;
-    font-size: 2vh;
+.user-input-login,
+.password-input-login {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-sm);
+  background: var(--bg);
 }
 
-.password-login{
-    display: flex;
-    flex-direction: row;
-    gap: 4vh;
-    align-items: center;
-    font-size: 2vh;
-}
-
-.links{
+.links {
   display: flex;
-  flex-direction: row;
-  gap: 12.5vh;
-  font-size: 22px;
+  justify-content: space-between;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
 }
 
 .confirm-button {
-  padding: 15px 30px;
-  border: 2px solid #2c2c2c;
-  background-color: #1a1a1a;
-  color: #ffffff;
-  font-size: 1.2rem;
-  cursor: pointer;
-  border-radius: 30px;
-  transition: all 0.4s ease;
-  outline: none;
-  position: relative;
-  overflow: hidden;
-  font-weight: bold;
-}
-
-.confirm-button::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.25) 0%,
-    rgba(255, 255, 255, 0) 70%
-  );
-  transform: scale(0);
-  transition: transform 0.3s ease;
-}
+  padding: var(--space-3) var(--space-5);
 
-.confirm-button:hover::after {
-  transform: scale(4);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: #16130a;
+
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
 }
 
 .confirm-button:hover {
-  border-color: #666666;
-  background: #292929;
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 
-.user-input-login{
-  font-size: 1.8vh;
-}
+.confirmacao-login h2 {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
 
-.password-input-login{
-  font-size: 1.8vh;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--danger);
+
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 3px solid var(--danger);
+  border-radius: var(--radius-sm);
 }

@@ -1,52 +1,81 @@
 .menu-container {
     justify-self: end;
-    padding-right: 20px;
     position: relative;
 }
 
 .menu-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     background: transparent;
-    font-size: 3rem;
     border: none;
-    padding: 0;
+    padding: var(--space-2);
+
+    font-size: 1.75rem;
+    color: var(--text);
     cursor: pointer;
 }
 
-.modal {
-    justify-self: end;
-    padding: 30px;
-    border: none;
-    cursor: pointer;
-    font-size: 3rem;
+.menu-button:hover {
+    color: var(--accent);
 }
 
 .side-modal {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: var(--space-2);
 
     position: absolute;
-    top: 0;
-    right: calc(85% + 20px);
+    top: 100%;
+    right: 0;
     z-index: 10;
+    margin-top: var(--space-2);
 
-    width: 160px;
-    padding: 18px;
+    width: 190px;
+    padding: var(--space-2);
 
-    background: #24252b;
-    border-radius: 8px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
 }
 
 .logout,
-.alternativa{
+.alternativa {
     display: flex;
-    justify-content: center;
-    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
-    gap: 10px;
-    font-size: 1rem;
+    gap: var(--space-3);
+
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-align: left;
+
     background: transparent;
     border: none;
+    border-radius: var(--radius-sm);
+    color: var(--text);
     cursor: pointer;
 }
 
+.logout:hover,
+.alternativa:hover {
+    background: var(--surface);
+    color: var(--text-strong);
+}
+
+.logout svg,
+.alternativa svg {
+    flex-shrink: 0;
+    font-size: 1.1em;
+    color: var(--text-muted);
+}
+
+.logout:hover svg,
+.alternativa:hover svg {
+    color: var(--accent);
+}
