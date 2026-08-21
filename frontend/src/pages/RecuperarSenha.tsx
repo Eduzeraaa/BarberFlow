@@ -2,25 +2,31 @@ import './RecuperarSenha.css'
 import { Header } from '../components/RoutesHeader/RoutesHeader'
 import { FaPhoneAlt } from "react-icons/fa"
 import { TbLock } from 'react-icons/tb'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { apiUrl } from '../config/api'
 import { useNavigate } from 'react-router-dom'
 import { MdOutlineTextsms } from "react-icons/md";
 
 export function Recuperar() {
+
     const [postValidation, setPostValidation] = useState(false)
     const [phone, setPhone] = useState('')
     const [code, setCode] = useState('')
     const [newPassword, setNewPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [message, setMessage] = useState('')
+    const [cooldownSeconds, setCooldownSeconds] = useState(0)
+    const [precisaNovoCodigo, setPrecisaNovoCodigo] = useState(false)
 
     const redirect = useNavigate()
-    const temMuitasTentativas = message.includes('muitas tentativas')
 
     async function handleRequestCode() {
         if (!phone) {
             setMessage('Informe seu telefone')
+            return
+        }
+
+        if (cooldownSeconds > 0) {
             return
         }
 
@@ -34,12 +40,32 @@ export function Recuperar() {
         const data = await response.json()
 
         if (data.success) {
-            setMessage('Código enviado! Verifique seu SMS')
+            setPrecisaNovoCodigo(false)
+            setCode('')
             setPostValidation(true)
-        } else {
-            setMessage(data.message)
+            setMessage('Código enviado! Verifique seu SMS.')
+            return
         }
+
+        // no cooldown quem explica é a linha do contador, não a mensagem
+        if (data.cooldownSeconds) {
+            setCooldownSeconds(data.cooldownSeconds)
+            return
+        }
+
+        setMessage(data.message)
     }
+
+    // só mexe no contador. a mensagem é assunto do servidor.
+    useEffect(() => {
+        if (cooldownSeconds <= 0) return
+
+        const timer = setTimeout(() => {
+            setCooldownSeconds(prev => prev - 1)
+        }, 1000)
+
+        return () => clearTimeout(timer)
+    }, [cooldownSeconds])
 
     async function handleResetPassword() {
         if (!code || !newPassword || !confirmPassword) {
@@ -47,7 +73,7 @@ export function Recuperar() {
             return
         }
 
-        if (newPassword.length < 8){
+        if (newPassword.length < 8) {
             setMessage('Sua senha tem menos que 8 caracteres.')
             return
         }
@@ -56,9 +82,9 @@ export function Recuperar() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({ 
-                phone, 
-                code, 
+            body: JSON.stringify({
+                phone,
+                code,
                 newPassword,
                 confirmNewPassword: confirmPassword
             })
@@ -74,8 +100,15 @@ export function Recuperar() {
             setNewPassword('')
             setConfirmPassword('')
             redirect('/login')
+            return
+        }
+
+        if (data.message.includes('muitas tentativas') || data.message.includes('expirou')) {
+            setPrecisaNovoCodigo(true)
         }
     }
+
+    const emCooldown = cooldownSeconds > 0
 
     return (
         <>
@@ -92,7 +125,7 @@ export function Recuperar() {
                             <div className='telefone-recovery'>
                                 <FaPhoneAlt />
                                 <label>Telefone</label>
-                                <input 
+                                <input
                                     className='user-number-recovery'
                                     type="text"
                                     placeholder='Insira seu telefone'
@@ -101,50 +134,67 @@ export function Recuperar() {
                                 />
                             </div>
 
-                            <button onClick={handleRequestCode}>Solicitar Código</button>
+                            <button onClick={handleRequestCode} disabled={emCooldown}>
+                                {emCooldown ? `Aguarde ${cooldownSeconds}s` : 'Solicitar Código'}
+                            </button>
                         </>
                     ) : (
                         <>
                             <div className='code-recovery'>
                                 <MdOutlineTextsms />
                                 <label>Código SMS</label>
-                                <input 
+                                <input
                                     type="text"
                                     placeholder='Código recebido por SMS'
                                     value={code}
                                     onChange={(event) => setCode(event.target.value)}
+                                    disabled={precisaNovoCodigo}
                                 />
                             </div>
 
                             <div className='password-recovery'>
                                 <TbLock />
                                 <label>Nova Senha</label>
-                                <input 
+                                <input
                                     type="password"
                                     placeholder='Mínimo 8 caracteres'
                                     value={newPassword}
                                     onChange={(event) => setNewPassword(event.target.value)}
+                                    disabled={precisaNovoCodigo}
                                 />
                             </div>
 
                             <div className='password-confirm-recovery'>
                                 <TbLock />
                                 <label>Confirmar Senha</label>
-                                <input 
+                                <input
                                     type="password"
                                     placeholder='Confirme sua senha'
                                     value={confirmPassword}
                                     onChange={(event) => setConfirmPassword(event.target.value)}
+                                    disabled={precisaNovoCodigo}
                                 />
                             </div>
 
-                            <button onClick={temMuitasTentativas ? handleRequestCode : handleResetPassword}>
-                                {temMuitasTentativas ? 'Pedir novo código' : 'Resetar Senha'}
-                            </button>
+                            {precisaNovoCodigo ? (
+                                <button onClick={handleRequestCode} disabled={emCooldown}>
+                                    {emCooldown ? `Aguarde ${cooldownSeconds}s` : 'Pedir novo código'}
+                                </button>
+                            ) : (
+                                <button onClick={handleResetPassword}>
+                                    Resetar Senha
+                                </button>
+                            )}
                         </>
                     )}
 
-                    <p className='recovery-message'>{message}</p>
+                    {message && <p className='recovery-message'>{message}</p>}
+
+                    {emCooldown && (
+                        <p className='recovery-cooldown'>
+                            Novo código disponível em {cooldownSeconds}s
+                        </p>
+                    )}
                 </div>
             </div>
         </>

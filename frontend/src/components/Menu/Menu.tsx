@@ -10,7 +10,7 @@ import { useUser } from '../../context/UserContext'
 
 export function Menu() {
 
-    const { refreshUser } = useUser()
+    const { refreshUser, user } = useUser()
 
     const [modalOpen, setModalOpen] = useState(false)
 

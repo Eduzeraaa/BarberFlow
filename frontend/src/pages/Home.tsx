@@ -18,8 +18,6 @@ export function Home() {
 
     return (
         <>
-        {user?.user}
-        {user?.role}
         <div className="container-home">
 
             <Header />

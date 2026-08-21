@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express'
-import { users } from '../config/database.js'
+import { users, recovery } from '../config/database.js'
 import { sendSMS } from '../services/sms.service.js'
 import { saveCode, deleteCode, generateCode, validateCode } from '../services/recovery.service.js'
 import bcrypt from 'bcrypt'
@@ -9,6 +9,22 @@ export async function requestRecovery(request: Request, response: Response)  {
 
     if (!phone) {
         return response.json({ success: false, message: 'Informe seu telefone.' })
+    }
+
+    const existingRequest = await recovery.findOne({ phone })
+
+    if (existingRequest && existingRequest.newRequestAt > new Date()) {
+
+        const msLeft = existingRequest.newRequestAt.getTime() - Date.now()
+        const secondsLeft = Math.ceil(msLeft / 1000)
+
+        return response.status(429).json({ 
+            success: false,
+            message: `Aguarde ${secondsLeft} segundos`,
+            cooldownSeconds: secondsLeft 
+
+        })
+    
     }
 
     const searchResult = await users.findOne({phone})

@@ -14,6 +14,7 @@ export function Agendamento () {
     const [date, setDate] = useState ('')
     const [time, setTime] = useState ('')
     const [confirm, setConfirm] = useState('')
+    const [bookedTimes, setBookedTimes] = useState<string[]>([])
 
     const hoje = new Date().toISOString().split('T')[0]
     const redirect = useNavigate()
@@ -26,6 +27,28 @@ export function Agendamento () {
             redirect('/login')
         }
     }, [user, loading, redirect])
+
+    useEffect(() => {
+        if (!barber || !date) {
+            setBookedTimes([])
+            return
+        }
+
+        async function fetchBookedTimes() {
+            const response = await fetch(`${apiUrl}/buscarAgendamentos`, {
+                credentials: 'include'
+            })
+
+            const appointments = await response.json()
+            const booked = appointments
+                .filter((apt: any) => apt.barber === barber && apt.date === date && apt.status === true)
+                .map((apt: any) => apt.time)
+
+            setBookedTimes(booked)
+        }
+
+        fetchBookedTimes()
+    }, [barber, date])
 
 
     async function handleConfirm() {
@@ -95,22 +118,15 @@ export function Agendamento () {
                     <h2 className='subtitle'>Horário</h2>
                     <select className='horario' name="horario" onChange={(event) => setTime(event.target.value)}>
                         <option value="escolha-time">Escolha um horário:</option>
-                        <option value="08:00">08:00</option>
-                        <option value='08:30'>08:30</option>
-                        <option value='09:00'>09:00</option>
-                        <option value='09:30'>09:30</option>
-                        <option value='10:00'>10:00</option>
-                        <option value='10:30'>10:30</option>
-                        <option value='11:00'>11:00</option>
-                        <option value='11:30'>11:30</option>
-                        <option value='14:00'>14:00</option>
-                        <option value='14:30'>14:30</option>
-                        <option value='15:00'>15:00</option>
-                        <option value='15:30'>15:30</option>
-                        <option value='16:00'>16:00</option>
-                        <option value='16:30'>16:30</option>
-                        <option value='17:00'>17:00</option>
-                        <option value='17:30'>17:30</option>
+                        {['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'].map(timeSlot => (
+                            <option
+                                key={timeSlot}
+                                value={timeSlot}
+                                disabled={bookedTimes.includes(timeSlot)}
+                            >
+                                {timeSlot}
+                            </option>
+                        ))}
                     </select>
                             
                     <button 

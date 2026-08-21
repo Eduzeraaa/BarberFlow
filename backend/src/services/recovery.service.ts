@@ -24,7 +24,7 @@ export async function saveCode (phone: string, codeHash: string) {
     )
 
     const newRequestAt = new Date(
-        Date.now() + 2 + 60 + 1000
+        Date.now() + 3 * 60 * 1000
     )
 
     await recovery.insertOne({

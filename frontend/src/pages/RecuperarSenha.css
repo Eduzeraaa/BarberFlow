@@ -48,6 +48,13 @@
     font-size: 1.8vh;
 }
 
+.code-recovery input:disabled,
+.password-recovery input:disabled,
+.password-confirm-recovery input:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
 button {
     padding: 15px 30px;
     border: 2px solid #2c2c2c;
@@ -88,9 +95,30 @@ button:hover {
     background: #292929;
 }
 
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: #2c2c2c;
+    background-color: #1a1a1a;
+}
+
+button:disabled:hover {
+    border-color: #2c2c2c;
+    background-color: #1a1a1a;
+}
+
 .recovery-message {
     text-align: center;
     font-size: 1.1rem;
     color: #cccccc;
     margin-top: 2vh;
+    margin-bottom: 0;
+}
+
+.recovery-cooldown {
+    text-align: center;
+    font-size: 0.95rem;
+    color: #888888;
+    margin-top: 1vh;
+    margin-bottom: 0;
 }

@@ -156,3 +156,25 @@
     border-radius: 8px;
     cursor: pointer;
 }
+
+.controls-admin {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.filter-barbeiro {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    background: #424242;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 50ms ease-out;
+    font-weight: 600;
+}
+
+.filter-barbeiro:hover {
+    background: #353535;
+}

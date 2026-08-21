@@ -26,6 +26,7 @@ export function Admin () {
     const [modalOpen, setModalOpen] = useState(false)
     const [confirm, setConfirm] = useState('')
     const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
+    const [filterBarber, setFilterBarber] = useState('')
 
     const redirect = useNavigate()
 
@@ -46,6 +47,10 @@ export function Admin () {
         }
 
     }, [user, userRole, loadingUser, redirect])
+
+    const filteredAppointments = filterBarber
+        ? appointments.filter(apt => apt.barber === filterBarber)
+        : appointments
 
     async function loadAppointments() {
 
@@ -94,12 +99,25 @@ export function Admin () {
 
                 <h1>Dados e Estatísticas</h1>
 
-                <button 
-                    className='button-load-appointments'
-                    onClick={loadAppointments}
-                >
-                    {loading ? 'Carregando...' : 'Carregar Agendamentos'}
-                </button>
+                <div className="controls-admin">
+                    <button
+                        className='button-load-appointments'
+                        onClick={loadAppointments}
+                    >
+                        {loading ? 'Carregando...' : 'Carregar Agendamentos'}
+                    </button>
+
+                    <select
+                        className='filter-barbeiro'
+                        value={filterBarber}
+                        onChange={(e) => setFilterBarber(e.target.value)}
+                    >
+                        <option value="">Todos os barbeiros</option>
+                        <option value="José">José</option>
+                        <option value="Roberto">Roberto</option>
+                        <option value="Cláudio">Cláudio</option>
+                    </select>
+                </div>
 
             </div>
 
@@ -123,7 +141,7 @@ export function Admin () {
 
                     <tbody>
 
-                        {appointments.map((appointment) => (
+                        {filteredAppointments.map((appointment) => (
 
                             <tr key={appointment._id}>
 

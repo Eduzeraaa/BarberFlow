@@ -88,3 +88,8 @@
 .subtitle{
     font-size: 2.8vh;
 }
+
+.horario option:disabled {
+    opacity: 0.4;
+    color: #888888;
+}

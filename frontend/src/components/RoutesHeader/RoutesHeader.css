@@ -1,6 +1,12 @@
 .total-header {
     background: #0c0d11;
     width: 100%;
+
+    /* o header e o dropdown dele ficam acima do conteúdo da página.
+       sem isso, elementos com position: relative que vêm depois no DOM
+       pintam por cima do menu e roubam o clique. */
+    position: relative;
+    z-index: 100;
 }
 
 .header {

@@ -28,6 +28,7 @@
     position: absolute;
     top: 0;
     right: calc(85% + 20px);
+    z-index: 10;
 
     width: 160px;
     padding: 18px;

@@ -52,7 +52,11 @@ export async function getAppointment(request: Request, response: Response) {
 export async function cancelAppointment(request: Request, response: Response) {
     const { barber, date, time } = request.body
 
-    const appointment = await agendamentos.findOne({ barber, date, time })
+    if (!request.user?.phone) {
+        return response.status(401).json({ message: 'Não autenticado' })
+    }
+
+    const appointment = await agendamentos.findOne({ barber, date, time, phone: request.user.phone })
 
     if (appointment === null) {
         return response.json({
