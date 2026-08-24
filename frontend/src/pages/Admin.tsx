@@ -87,8 +87,6 @@ export function Admin () {
 
         const data = await response.json()
 
-        // response.ok é true para qualquer 2xx. Não depende do texto da
-        // mensagem, então mudar a copy do backend não quebra esta tela.
         setCriarAdminDeuCerto(response.ok)
         setCriarAdminMsg(data.message)
 
@@ -113,8 +111,6 @@ export function Admin () {
         const response = await fetch(`${apiUrl}/buscarAgendamentos`, {credentials: 'include'})
         const data = await response.json()
 
-        // sem filtro: o admin vê tudo, ativos e cancelados.
-        // é a coluna Status que diferencia agora.
         setAppointments(data)
         setLoading(false)
 

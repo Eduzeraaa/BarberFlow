@@ -48,8 +48,7 @@ export function MeusAgendamentos () {
 
             const data = await response.json()
 
-            const appointmentsAtivos = data.filter((app: Appointment) => app.status !== false)
-            setAppointments(appointmentsAtivos)
+            setAppointments(data)
             setLoading(false)
 
         }
@@ -121,6 +120,7 @@ export function MeusAgendamentos () {
                                     <th>Barbeiro</th>
                                     <th>Data</th>
                                     <th>Horário</th>
+                                    <th>Status</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -132,6 +132,7 @@ export function MeusAgendamentos () {
                                         <td>{appointment.barber}</td>
                                         <td>{appointment.date}</td>
                                         <td>{appointment.time}</td>
+                                        <td>{appointment.status === true ? 'Agendado' : 'Cancelado'}</td>
                                         <td>
                                             <button
                                                 className='botao-cancelamento'
@@ -164,6 +165,7 @@ export function MeusAgendamentos () {
                                     <th>Barbeiro</th>
                                     <th>Data</th>
                                     <th>Horário</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
 
@@ -174,6 +176,7 @@ export function MeusAgendamentos () {
                                         <td>{appointment.barber}</td>
                                         <td>{appointment.date}</td>
                                         <td>{appointment.time}</td>
+                                        <td>{appointment.status === true ? 'Agendado' : 'Cancelado'}</td>
                                     </tr>
                                 ))}
                             </tbody>
