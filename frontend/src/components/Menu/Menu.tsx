@@ -10,7 +10,7 @@ import { useUser } from '../../context/UserContext'
 
 export function Menu() {
 
-    const { refreshUser, user } = useUser()
+    const { refreshUser } = useUser()
 
     const [modalOpen, setModalOpen] = useState(false)
 
@@ -63,7 +63,7 @@ export function Menu() {
                         >Agendamento <RiCalendarScheduleFill /></button>
                     )}
 
-                    {location.pathname === '/agendamento' && (
+                    {(location.pathname === '/agendamento' || location.pathname === '/meusAgendamentos') && (
                         <button
                             className="alternativa"
                             onClick={() => redirect('/admin')}

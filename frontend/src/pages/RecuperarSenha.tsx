@@ -128,7 +128,7 @@ export function Recuperar() {
                                 <input
                                     className='user-number-recovery'
                                     type="text"
-                                    placeholder='Insira seu telefone'
+                                    placeholder='Telefone com DDD'
                                     value={phone}
                                     onChange={(event) => setPhone(event.target.value)}
                                 />

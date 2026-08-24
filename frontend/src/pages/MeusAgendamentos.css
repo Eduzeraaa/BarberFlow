@@ -37,7 +37,5 @@
     color: var(--text-muted);
 }
 
-/* Agendamentos que já passaram ficam mais apagados */
-.tabela-anteriores {
-    opacity: 0.6;
-}
+/* .tabela-proximos e .tabela-anteriores também moram no Admin.css,
+   junto com o resto do estilo de tabela que as duas páginas usam. */

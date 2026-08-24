@@ -4,6 +4,7 @@ import { apiUrl } from "../config/api"
 import './Admin.css'
 import { useNavigate } from 'react-router-dom'
 import { MdCancel } from "react-icons/md";
+import { IoMdAddCircle } from "react-icons/io";
 import { useUser } from '../context/UserContext'
 
 export interface Appointment {
@@ -27,6 +28,12 @@ export function Admin () {
     const [confirm, setConfirm] = useState('')
     const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
     const [filterBarber, setFilterBarber] = useState('')
+
+    const [criarAdminOpen, setCriarAdminOpen] = useState(false)
+    const [novoAdminNome, setNovoAdminNome] = useState('')
+    const [novoAdminTelefone, setNovoAdminTelefone] = useState('')
+    const [criarAdminMsg, setCriarAdminMsg] = useState('')
+    const [criarAdminDeuCerto, setCriarAdminDeuCerto] = useState(false)
 
     const redirect = useNavigate()
 
@@ -52,6 +59,53 @@ export function Admin () {
         ? appointments.filter(apt => apt.barber === filterBarber)
         : appointments
 
+    const hoje = new Date().toISOString().split('T')[0]
+
+    // o filtro de barbeiro vale para as duas tabelas, por isso a divisão
+    // parte de filteredAppointments e não de appointments
+    const proximos = filteredAppointments
+        .filter((app) => app.date >= hoje)
+        .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time))
+
+    const anteriores = filteredAppointments
+        .filter((app) => app.date < hoje)
+        .sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time))
+
+    async function handleCriarAdmin() {
+
+        const response = await fetch(`${apiUrl}/criarAdmin`, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                user: novoAdminNome,
+                phone: novoAdminTelefone
+            })
+        })
+
+        const data = await response.json()
+
+        // response.ok é true para qualquer 2xx. Não depende do texto da
+        // mensagem, então mudar a copy do backend não quebra esta tela.
+        setCriarAdminDeuCerto(response.ok)
+        setCriarAdminMsg(data.message)
+
+        if (response.ok) {
+            setNovoAdminNome('')
+            setNovoAdminTelefone('')
+        }
+
+    }
+
+    function fecharCriarAdmin() {
+        setCriarAdminOpen(false)
+        setCriarAdminMsg('')
+        setNovoAdminNome('')
+        setNovoAdminTelefone('')
+    }
+
     async function loadAppointments() {
 
         setLoading(true)
@@ -59,13 +113,14 @@ export function Admin () {
         const response = await fetch(`${apiUrl}/buscarAgendamentos`, {credentials: 'include'})
         const data = await response.json()
 
-        const appointmentsAtivos = data.filter((app: Appointment) => app.status !== false)
-        setAppointments(appointmentsAtivos)
+        // sem filtro: o admin vê tudo, ativos e cancelados.
+        // é a coluna Status que diferencia agora.
+        setAppointments(data)
         setLoading(false)
 
     }
 
-    async function handleConfirm(barber: string, date: string, time: string) {
+    async function handleConfirm(id: string) {
 
         const response = await fetch(`${apiUrl}/cancelarAgendamento`, {
             method: 'POST',
@@ -73,11 +128,7 @@ export function Admin () {
                 'Content-type': 'application/json'
             },
             credentials: 'include',
-            body: JSON.stringify({
-                barber,
-                date,
-                time
-            })
+            body: JSON.stringify({ id })
         })
 
         const data = await response.json()
@@ -117,62 +168,124 @@ export function Admin () {
                         <option value="Roberto">Roberto</option>
                         <option value="Cláudio">Cláudio</option>
                     </select>
+
+                    <button
+                        className='button-novo-admin'
+                        onClick={() => setCriarAdminOpen(true)}
+                    >
+                        <IoMdAddCircle />
+                    </button>
                 </div>
 
             </div>
 
             <div className="content-admin">
 
-                <table className='tabela'>
+                {proximos.length > 0 && (
+                    <>
+                        <h2 className='subtitulo-admin'>Próximos</h2>
 
-                    <thead className='titulo-coluna'>
+                        <table className='tabela tabela-proximos'>
 
-                        <tr>
-                            <th>Cliente</th>
-                            <th>Serviço</th>
-                            <th>Barbeiro</th>
-                            <th>Data</th>
-                            <th>Horário</th>
-                            <th>Telefone</th>
-                            <th></th>
-                        </tr>
+                            <thead className='titulo-coluna'>
 
-                    </thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Serviço</th>
+                                    <th>Barbeiro</th>
+                                    <th>Data</th>
+                                    <th>Horário</th>
+                                    <th>Telefone</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
 
-                    <tbody>
+                            </thead>
 
-                        {filteredAppointments.map((appointment) => (
+                            <tbody>
 
-                            <tr key={appointment._id}>
+                                {proximos.map((appointment) => (
 
-                                <td>{appointment.user}</td>
-                                <td>{appointment.service}</td>
-                                <td>{appointment.barber}</td>
-                                <td>{appointment.date}</td>
-                                <td>{appointment.time}</td>
-                                <td>{appointment.phone}</td>
+                                    <tr key={appointment._id}>
 
-                                <td>
+                                        <td>{appointment.user}</td>
+                                        <td>{appointment.service}</td>
+                                        <td>{appointment.barber}</td>
+                                        <td>{appointment.date}</td>
+                                        <td>{appointment.time}</td>
+                                        <td>{appointment.phone}</td>
+                                        <td>{appointment.status === true ? 'Agendado' : 'Cancelado'}</td>
 
-                                    <button 
-                                        className='botao-cancelamento'
-                                        onClick={() => {
-                                            setSelectedAppointment(appointment)
-                                            setModalOpen(true)
-                                        }}
-                                    >
-                                        <MdCancel />
-                                    </button>
+                                        <td>
 
-                                </td>
+                                            {appointment.status === true && (
+                                                <button
+                                                    className='botao-cancelamento'
+                                                    title='Cancelar agendamento'
+                                                    onClick={() => {
+                                                        setSelectedAppointment(appointment)
+                                                        setModalOpen(true)
+                                                    }}
+                                                >
+                                                    <MdCancel />
+                                                </button>
+                                            )}
 
-                            </tr>
+                                        </td>
 
-                        ))}
+                                    </tr>
 
-                    </tbody>
+                                ))}
 
-                </table>
+                            </tbody>
+
+                        </table>
+                    </>
+                )}
+
+                {anteriores.length > 0 && (
+                    <>
+                        <h2 className='subtitulo-admin'>Anteriores</h2>
+
+                        <table className='tabela tabela-anteriores'>
+
+                            <thead className='titulo-coluna'>
+
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Serviço</th>
+                                    <th>Barbeiro</th>
+                                    <th>Data</th>
+                                    <th>Horário</th>
+                                    <th>Telefone</th>
+                                    <th>Status</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                {anteriores.map((appointment) => (
+
+                                    <tr key={appointment._id}>
+
+                                        <td>{appointment.user}</td>
+                                        <td>{appointment.service}</td>
+                                        <td>{appointment.barber}</td>
+                                        <td>{appointment.date}</td>
+                                        <td>{appointment.time}</td>
+                                        <td>{appointment.phone}</td>
+                                        <td>{appointment.status === true ? 'Realizado' : 'Cancelado'}</td>
+
+                                    </tr>
+
+                                ))}
+
+                            </tbody>
+
+                        </table>
+                    </>
+                )}
 
                 {modalOpen && (
 
@@ -186,17 +299,13 @@ export function Admin () {
 
                                 if (selectedAppointment) {
 
-                                    handleConfirm(
-                                        selectedAppointment.barber,
-                                        selectedAppointment.date,
-                                        selectedAppointment.time
-                                    )
+                                    handleConfirm(selectedAppointment._id)
 
                                 }
 
                             }}
                         >
-                            Confirmar
+                            Sim
                         </button>
             
                         <button
@@ -206,9 +315,64 @@ export function Admin () {
                                 setSelectedAppointment(null)
                             }}
                         >
-                            Cancelar
+                            Não
                         </button>
             
+                    </div>
+
+                )}
+
+                {criarAdminOpen && (
+
+                    <div className="criar-admin-modal">
+
+                        <h2>Novo administrador</h2>
+
+                        <div className='campo-novo-admin'>
+                            <label>Nome</label>
+                            <input
+                                type="text"
+                                placeholder='Nome do administrador'
+                                value={novoAdminNome}
+                                onChange={(event) => setNovoAdminNome(event.target.value)}
+                            />
+                        </div>
+
+                        <div className='campo-novo-admin'>
+                            <label>Telefone</label>
+                            <input
+                                type="text"
+                                placeholder='Telefone para contato'
+                                value={novoAdminTelefone}
+                                onChange={(event) => setNovoAdminTelefone(event.target.value)}
+                            />
+                        </div>
+
+                        <p className='aviso-novo-admin'>
+                            A senha não é definida aqui. Depois de criar, peça para
+                            que ele entre em "Esqueci a senha" e defina a dele.
+                        </p>
+
+                        {criarAdminMsg && (
+                            <p className={criarAdminDeuCerto ? 'resultado-novo-admin sucesso' : 'resultado-novo-admin erro'}>
+                                {criarAdminMsg}
+                            </p>
+                        )}
+
+                        <button
+                            className="confirmar-novo-admin"
+                            onClick={handleCriarAdmin}
+                        >
+                            Criar
+                        </button>
+
+                        <button
+                            className="cancelar-cancelamento"
+                            onClick={fecharCriarAdmin}
+                        >
+                            Fechar
+                        </button>
+
                     </div>
 
                 )}

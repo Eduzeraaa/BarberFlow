@@ -3,12 +3,20 @@ import { users, recovery } from '../config/database.js'
 import { sendSMS } from '../services/sms.service.js'
 import { saveCode, deleteCode, generateCode, validateCode } from '../services/recovery.service.js'
 import bcrypt from 'bcrypt'
+import { normalizePhone } from '../utils/phone.js'
 
 export async function requestRecovery(request: Request, response: Response)  {
-    const {phone} = request.body
+
+    if (!request.body.phone) {
+        return response.json({ success: false, message: 'Informe seu telefone.' })
+    }
+
+    // a partir daqui só existe a forma normalizada, para o cooldown, a
+    // busca do usuário e o código ficarem todos sob a mesma chave
+    const phone = normalizePhone(request.body.phone)
 
     if (!phone) {
-        return response.json({ success: false, message: 'Informe seu telefone.' })
+        return response.json({ success: false, message: 'Telefone inválido.' })
     }
 
     const existingRequest = await recovery.findOne({ phone })
@@ -54,7 +62,15 @@ export async function requestRecovery(request: Request, response: Response)  {
 export async function resetPassword(request: Request, response: Response) {
     // recebe phone + code + newPassword do frontend
 
-    const {phone, code, newPassword, confirmNewPassword} = request.body
+    const {code, newPassword, confirmNewPassword} = request.body
+
+    if (!request.body.phone) {
+        return response.json({ success: false, message: 'Informe seu telefone.' })
+    }
+
+    // mesma normalização do requestRecovery: o código foi salvo sob a
+    // forma só-dígitos, então a validação precisa buscar por ela
+    const phone = normalizePhone(request.body.phone)
 
     // validateCode()
 

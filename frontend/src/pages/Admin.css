@@ -12,12 +12,53 @@
     font-size: var(--text-3xl);
 }
 
+/* As duas colunas 1fr das pontas têm a mesma largura, então o miolo
+   (carregar + filtro) fica centrado de verdade no container, e o botão
+   de novo admin encosta na direita sem puxar os outros.
+   Com margin-left:auto no último item isso não funcionaria: a margem
+   automática engoliria todo o espaço livre e jogaria os dois primeiros
+   para a esquerda. */
 .controls-admin {
-    display: flex;
-    gap: var(--space-3);
+    display: grid;
+    grid-template-columns: 1fr auto auto 1fr;
     align-items: center;
-    flex-wrap: wrap;
-    justify-content: center;
+    gap: var(--space-3);
+    width: 100%;
+}
+
+.button-load-appointments {
+    grid-column: 2;
+}
+
+.filter-barbeiro {
+    grid-column: 3;
+}
+
+.button-novo-admin {
+    grid-column: 4;
+    justify-self: end;
+}
+
+/* no celular os três não cabem lado a lado */
+@media (max-width: 560px) {
+    .controls-admin {
+        grid-template-columns: 1fr auto;
+    }
+
+    .button-load-appointments {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .button-novo-admin {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .filter-barbeiro {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
 }
 
 .button-load-appointments {
@@ -101,13 +142,32 @@
     color: var(--text);
 }
 
-/* a coluna do botão de cancelar não precisa de largura.
-   escopado ao Admin: MeusAgendamentos usa a mesma .tabela,
-   e lá a última coluna é "Horário". */
-.content-admin .tabela td:last-child,
-.content-admin .tabela th:last-child {
+
+/* Só a tabela de próximos tem a coluna do botão de cancelar.
+   Na de anteriores a última coluna é o Status, que não pode encolher.
+   Por isso a regra é presa à classe, não a "última coluna da tabela". */
+.tabela-proximos td:last-child,
+.tabela-proximos th:last-child {
     width: 1%;
     text-align: right;
+}
+
+/* O que já passou fica mais apagado */
+.tabela-anteriores {
+    opacity: 0.6;
+}
+
+.subtitulo-admin {
+    align-self: flex-start;
+    margin: var(--space-6) 0 var(--space-3);
+
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--text-strong);
+}
+
+.subtitulo-admin:first-child {
+    margin-top: 0;
 }
 
 .botao-cancelamento {
@@ -127,8 +187,16 @@
     color: var(--danger);
 }
 
-/* Modal de confirmação */
-.cancelamento-modal {
+.button-novo-admin {
+    background: transparent;
+    border: none;
+    font-size: 3vh;
+}
+
+
+/* Modal de confirmação — o mesmo visual serve para o de criar admin */
+.cancelamento-modal,
+.criar-admin-modal {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -151,7 +219,7 @@
 
 .cancelamento-modal p {
     margin-bottom: var(--space-2);
-    font-size: var(--text-base);
+    font-size: 30px;
     color: var(--text);
 }
 
@@ -160,7 +228,7 @@
     width: 100%;
     padding: var(--space-3) var(--space-4);
 
-    font-size: var(--text-sm);
+    font-size: 20px;
     font-weight: 600;
 
     border-radius: var(--radius-sm);
@@ -185,6 +253,91 @@
 .cancelar-cancelamento:hover {
     background: var(--surface);
     color: var(--text-strong);
+}
+
+/* Modal de novo admin — mais largo que o de cancelamento, porque tem
+   formulário, aviso e resultado, não só uma pergunta de sim/não.
+   Vem depois da regra compartilhada, então ganha dela. */
+.criar-admin-modal {
+    max-width: 500px;
+    padding: var(--space-7);
+    gap: var(--space-4);
+}
+
+@media (max-width: 560px) {
+    .criar-admin-modal {
+        padding: var(--space-5);
+    }
+}
+
+.criar-admin-modal h2 {
+    margin-bottom: var(--space-2);
+    font-size: var(--text-3xl);
+}
+
+.campo-novo-admin {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    text-align: left;
+}
+
+.campo-novo-admin label {
+    font-size: 25px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.campo-novo-admin input {
+    width: 100%;
+    font-size: 23px;
+    background: var(--bg);
+}
+
+.aviso-novo-admin {
+    font-size: 19px;
+    line-height: 1.5;
+    text-align: left;
+    color: var(--text-muted);
+}
+
+.resultado-novo-admin {
+    padding: var(--space-3) var(--space-4);
+
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-align: left;
+
+    border-radius: var(--radius-sm);
+    border-left: 3px solid;
+}
+
+.resultado-novo-admin.sucesso {
+    color: var(--success);
+    background: rgba(74, 222, 128, 0.1);
+}
+
+.resultado-novo-admin.erro {
+    color: var(--danger);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.confirmar-novo-admin {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+
+    font-size: 20px;
+    font-weight: 600;
+    color: #16130a;
+
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+}
+
+.confirmar-novo-admin:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
 }
 
 /* Aviso de cancelamento concluído */

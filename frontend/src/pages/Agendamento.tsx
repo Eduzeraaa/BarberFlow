@@ -15,6 +15,7 @@ export function Agendamento () {
     const [time, setTime] = useState ('')
     const [confirm, setConfirm] = useState('')
     const [bookedTimes, setBookedTimes] = useState<string[]>([])
+    const [recarregarHorarios, setRecarregarHorarios] = useState(0)
 
     const hoje = new Date().toISOString().split('T')[0]
     const redirect = useNavigate()
@@ -34,21 +35,27 @@ export function Agendamento () {
             return
         }
 
+        // se o usuário trocar de barbeiro ou data antes da resposta chegar,
+        // a resposta antiga não pode sobrescrever a nova.
+        let ignorar = false
+
         async function fetchBookedTimes() {
-            const response = await fetch(`${apiUrl}/buscarAgendamentos`, {
-                credentials: 'include'
-            })
+            const response = await fetch(
+                `${apiUrl}/horariosOcupados?barber=${encodeURIComponent(barber)}&date=${encodeURIComponent(date)}`,
+                { credentials: 'include' }
+            )
 
-            const appointments = await response.json()
-            const booked = appointments
-                .filter((apt: any) => apt.barber === barber && apt.date === date && apt.status === true)
-                .map((apt: any) => apt.time)
+            const data = await response.json()
 
-            setBookedTimes(booked)
+            if (!ignorar) {
+                setBookedTimes(data.times ?? [])
+            }
         }
 
         fetchBookedTimes()
-    }, [barber, date])
+
+        return () => { ignorar = true }
+    }, [barber, date, recarregarHorarios])
 
 
     async function handleConfirm() {
@@ -74,6 +81,9 @@ export function Agendamento () {
 
         setConfirm(data.message)
 
+        // sem isso o horário recém-agendado continua aparecendo como livre
+        setRecarregarHorarios((valor) => valor + 1)
+
     }
 
     return (
@@ -83,6 +93,7 @@ export function Agendamento () {
             <Header />
 
             <div className="header-agendamento">
+                <h1>Olá, {`${user?.user}.`}</h1>
                 <h1>Agende seu horário</h1>
             </div>
 

@@ -91,7 +91,7 @@ export function Cadastro () {
                             <input 
                                 className='user-number-signup'
                                 type="text"
-                                placeholder='Telefone para contato'
+                                placeholder='Telefone (com DDD)'
                                 onChange={(event) => setPhone(event.target.value)}
                             />
                         </div>

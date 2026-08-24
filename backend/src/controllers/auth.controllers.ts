@@ -1,21 +1,32 @@
 import type { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
+import crypto from 'crypto'
 import { users } from '../config/database.js'
 import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from '../config/env.js'
+import { normalizePhone } from '../utils/phone.js'
 
 export async function signup(request: Request, response: Response) {
 
     const {user, password, phone} = request.body
 
     if (!user || !password || !phone) {
-        return response.json({
+        return response.status(400).json({
             message: 'Informe nome, telefone e senha.'
         })
     }
 
+    const phoneNormalizado = normalizePhone(phone)
+
+    // se não sobrou nenhum dígito, o que veio não era telefone
+    if (!phoneNormalizado) {
+        return response.status(400).json({
+            message: 'Telefone inválido.'
+        })
+    }
+
     const searchResult = await users.findOne({
-        $or: [{ user }, { phone }]
+        $or: [{ user }, { phone: phoneNormalizado }]
     })
 
     if (searchResult === null){
@@ -24,20 +35,20 @@ export async function signup(request: Request, response: Response) {
 
         const hashPassword = await bcrypt.hash(password, saltRounds)
 
-        await users.insertOne({user, role:'cliente', password: hashPassword, phone})
+        await users.insertOne({user, role:'cliente', password: hashPassword, phone: phoneNormalizado})
         response.json({
             message: 'Cadastro realizado!',
         })
     }
 
     else if (searchResult.user === user) {
-        response.json({
+        response.status(409).json({
             message: 'Esse nome já está cadastrado. Escolha outro nome ou faça login!'
         })
     }
 
-    else if (searchResult.phone === phone) {
-        response.json({
+    else if (searchResult.phone === phoneNormalizado) {
+        response.status(409).json({
             message: 'Esse telefone já está cadastrado. Faça login ou entre em contato com o suporte.'
         })
     }
@@ -46,10 +57,26 @@ export async function signup(request: Request, response: Response) {
 export async function login(request: Request, response: Response) {
     
     const { userOrPhone, password } = request.body
-    
-    const searchResult = await users.findOne({
-        $or: [{ user: userOrPhone }, { phone: userOrPhone }]
-    })
+
+    if (!userOrPhone || !password) {
+        return response.status(400).json({
+            message: 'Informe login e senha.'
+        })
+    }
+
+    // Aqui o campo aceita nome OU telefone, então normalizamos apenas o
+    // lado do telefone. Se a pessoa digitou um nome, normalizePhone
+    // devolve '' — e o ramo do telefone é descartado para não casar por
+    // acidente com algum registro de telefone vazio.
+    const phoneBusca = normalizePhone(userOrPhone)
+
+    const buscaPor: object[] = [{ user: userOrPhone }]
+
+    if (phoneBusca) {
+        buscaPor.push({ phone: phoneBusca })
+    }
+
+    const searchResult = await users.findOne({ $or: buscaPor })
     
     if (searchResult === null) {
         return response.json({
@@ -77,13 +104,64 @@ export async function login(request: Request, response: Response) {
         sameSite: 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000
     })
-
+    
     response.json({
         message: 'Login efetuado com sucesso!',
         user: searchResult.user,
         role: searchResult.role,
         phone: searchResult.phone
     })
+}
+
+export async function createAdmin (request:Request, response:Response){
+
+    const {user, phone} = request.body
+
+    if (!user || !phone) {
+        return response.status(400).json({
+            message: 'Informe nome e telefone.'
+        })
+    }
+
+    const phoneNormalizado = normalizePhone(phone)
+
+    if (!phoneNormalizado) {
+        return response.status(400).json({
+            message: 'Telefone inválido.'
+        })
+    }
+
+    const searchResult = await users.findOne({
+        $or: [{ user }, { phone: phoneNormalizado }]
+    })
+
+    if (searchResult === null){
+
+        const randomPassword = String(crypto.randomInt(100000, 1000000))
+
+        const saltRounds = 10
+
+        const hashPassword = await bcrypt.hash(randomPassword, saltRounds)
+
+        await users.insertOne({user, role:'admin', password: hashPassword, phone: phoneNormalizado})
+
+        response.status(201).json({
+            message: 'Admin criado!',
+        })
+    }
+
+    else if (searchResult.user === user) {
+        response.status(409).json({
+            message: 'Esse nome já está cadastrado. Escolha outro nome ou faça login!'
+        })
+    }
+
+    else if (searchResult.phone === phoneNormalizado) {
+        response.status(409).json({
+            message: 'Esse telefone já está cadastrado. Faça login ou entre em contato com o suporte.'
+        })
+    }
+
 }
 
 export function logout (request: Request, response: Response) {
