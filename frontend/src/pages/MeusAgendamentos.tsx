@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Header } from "../components/RoutesHeader/RoutesHeader"
-import { apiUrl } from "../config/api"
+import { apiFetch } from "../config/apiFetch"
 import './MeusAgendamentos.css'
 import { useNavigate } from 'react-router-dom'
 import { MdCancel } from "react-icons/md"
@@ -42,13 +42,14 @@ export function MeusAgendamentos () {
 
             setLoading(true)
 
-            const response = await fetch(`${apiUrl}/meusAgendamentos`, {
-                credentials: 'include'
-            })
+            const { ok, data } = await apiFetch<Appointment[]>('/meusAgendamentos')
 
-            const data = await response.json()
+            if (ok) {
+                setAppointments(data)
+            } else {
+                setConfirm((data as any).message)
+            }
 
-            setAppointments(data)
             setLoading(false)
 
         }
@@ -59,16 +60,10 @@ export function MeusAgendamentos () {
 
     async function handleCancel(id: string) {
 
-        const response = await fetch(`${apiUrl}/cancelarAgendamento`, {
+        const { data } = await apiFetch('/cancelarAgendamento', {
             method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            credentials: 'include',
             body: JSON.stringify({ id })
         })
-
-        const data = await response.json()
 
         setConfirm(data.message)
         setModalOpen(false)
@@ -134,16 +129,18 @@ export function MeusAgendamentos () {
                                         <td>{appointment.time}</td>
                                         <td>{appointment.status === true ? 'Agendado' : 'Cancelado'}</td>
                                         <td>
-                                            <button
-                                                className='botao-cancelamento'
-                                                title='Cancelar agendamento'
-                                                onClick={() => {
-                                                    setSelectedAppointment(appointment)
-                                                    setModalOpen(true)
-                                                }}
-                                            >
-                                                <MdCancel />
-                                            </button>
+                                            {appointment.status === true && (
+                                                <button
+                                                    className='botao-cancelamento'
+                                                    title='Cancelar agendamento'
+                                                    onClick={() => {
+                                                        setSelectedAppointment(appointment)
+                                                        setModalOpen(true)
+                                                    }}
+                                                >
+                                                    <MdCancel />
+                                                </button>
+                                            )}
                                         </td>
                                     </tr>
                                 ))}
@@ -152,6 +149,9 @@ export function MeusAgendamentos () {
                         </table>
                     </>
                 )}
+
+
+                {/* ========== agendamentos passados ========== */}
 
                 {!loading && anteriores.length > 0 && (
                     <>
@@ -176,7 +176,7 @@ export function MeusAgendamentos () {
                                         <td>{appointment.barber}</td>
                                         <td>{appointment.date}</td>
                                         <td>{appointment.time}</td>
-                                        <td>{appointment.status === true ? 'Agendado' : 'Cancelado'}</td>
+                                        <td>{appointment.status === true ? 'Realizado' : 'Cancelado'}</td>
                                     </tr>
                                 ))}
                             </tbody>

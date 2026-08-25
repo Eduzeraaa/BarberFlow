@@ -18,10 +18,15 @@ export async function signup(request: Request, response: Response) {
 
     const phoneNormalizado = normalizePhone(phone)
 
-    // se não sobrou nenhum dígito, o que veio não era telefone
     if (!phoneNormalizado) {
         return response.status(400).json({
             message: 'Telefone inválido.'
+        })
+    }
+
+    if (password.length < 8){
+        return response.status(400).json({
+            message: 'Sua senha contém menos que 8 caracteres.'
         })
     }
 
@@ -36,7 +41,7 @@ export async function signup(request: Request, response: Response) {
         const hashPassword = await bcrypt.hash(password, saltRounds)
 
         await users.insertOne({user, role:'cliente', password: hashPassword, phone: phoneNormalizado})
-        response.json({
+        response.status(201).json({
             message: 'Cadastro realizado!',
         })
     }
@@ -64,10 +69,6 @@ export async function login(request: Request, response: Response) {
         })
     }
 
-    // Aqui o campo aceita nome OU telefone, então normalizamos apenas o
-    // lado do telefone. Se a pessoa digitou um nome, normalizePhone
-    // devolve '' — e o ramo do telefone é descartado para não casar por
-    // acidente com algum registro de telefone vazio.
     const phoneBusca = normalizePhone(userOrPhone)
 
     const buscaPor: object[] = [{ user: userOrPhone }]
@@ -79,7 +80,7 @@ export async function login(request: Request, response: Response) {
     const searchResult = await users.findOne({ $or: buscaPor })
     
     if (searchResult === null) {
-        return response.json({
+        return response.status(401).json({
             message: 'Login ou senha incorretos.',
         })
     }
@@ -87,7 +88,7 @@ export async function login(request: Request, response: Response) {
     const passwordMatch = await bcrypt.compare(password, searchResult.password)
     
     if (!passwordMatch) {
-        return response.json({
+        return response.status(401).json({
             message: 'Login ou senha incorretos.',
         })
     }
@@ -100,7 +101,7 @@ export async function login(request: Request, response: Response) {
 
     response.cookie('token', token, {
         httpOnly: true,
-        secure: false,
+        secure: true,
         sameSite: 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000
     })

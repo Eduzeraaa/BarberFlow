@@ -2,6 +2,10 @@ import type { Request, Response } from 'express'
 import { ObjectId } from 'mongodb'
 import { agendamentos } from '../config/database.js'
 
+const SERVICOS = ['Barba', 'Degradê', 'Social']
+const BARBEIROS = ['José', 'Roberto', 'Cláudio']
+const HORARIOS = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30']
+
 export async function createAppointment(request: Request, response: Response) {
     const { service, barber, date, time } = request.body
     
@@ -13,17 +17,39 @@ export async function createAppointment(request: Request, response: Response) {
     const phone = request.user?.phone
 
     if (service === undefined || barber === undefined || date === undefined || time === undefined || service === '' || barber === ''){
-        response.json({
+        response.status(400).json({
             message: 'Falta alguma informação! Confira novamente seu agendamento.',
         })
         return
+    }
+
+    if (!SERVICOS.includes(service)) {
+        return response.status(400).json({ message: 'Não oferecemos esse serviço.' })
+    }
+
+    if (!BARBEIROS.includes(barber)) {
+        return response.status(400).json({ message: 'Esse barbeiro não é nosso funcionário.' })
+    }
+
+    if (!HORARIOS.includes(time)) {
+        return response.status(400).json({ message: 'Esse horário não está na nossa grade.' })
+    }
+
+    const agendamentoEm = new Date(`${date}T${time}:00-03:00`)
+
+    if (Number.isNaN(agendamentoEm.getTime())) {
+        return response.status(400).json({ message: 'Data inválida.' })
+    }
+
+    if (agendamentoEm.getTime() <= Date.now()) {
+        return response.status(400).json({ message: 'Não dá para agendar em um horário que já passou.' })
     }
 
     const searchRequirements = await agendamentos.findOne({'time': time, 'date': date, 'barber': barber, 'status': true})
 
 
     if (searchRequirements !== null ){
-        response.json({
+        response.status(400).json({
             message: `${barber} está com o horário ocupado. Tente outro horário ou outro barbeiro!`
         })
         return
@@ -39,7 +65,7 @@ export async function createAppointment(request: Request, response: Response) {
         status: true
     })
 
-    response.json({
+    response.status(200).json({
         message: `Agendamento realizado com sucesso! Nos vemos no dia ${date} às ${time}.`,
     })
 }
@@ -94,7 +120,7 @@ export async function cancelAppointment(request: Request, response: Response) {
         { $set: { status: false } }
     )
 
-    return response.json({
+    return response.status(200).json({
         message: `Agendamento cancelado com sucesso!`
     })
 }
@@ -109,6 +135,6 @@ export async function getMyAppointments(request: Request, response: Response) {
     
     const myAppointments = await agendamentos.find({ phone }).toArray()
 
-    response.json(myAppointments)
+    response.status(200).json(myAppointments)
 
 }

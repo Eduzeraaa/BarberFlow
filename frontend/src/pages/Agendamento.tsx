@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './Agendamento.css'
 import { useNavigate } from 'react-router-dom';
-import { apiUrl } from '../config/api';
+import { apiFetch } from '../config/apiFetch';
 import { Header } from '../components/RoutesHeader/RoutesHeader';
 import { useUser } from '../context/UserContext'
 
@@ -14,6 +14,7 @@ export function Agendamento () {
     const [date, setDate] = useState ('')
     const [time, setTime] = useState ('')
     const [confirm, setConfirm] = useState('')
+    const [sending, setSending] = useState(false)
     const [bookedTimes, setBookedTimes] = useState<string[]>([])
     const [recarregarHorarios, setRecarregarHorarios] = useState(0)
 
@@ -35,17 +36,13 @@ export function Agendamento () {
             return
         }
 
-        // se o usuário trocar de barbeiro ou data antes da resposta chegar,
-        // a resposta antiga não pode sobrescrever a nova.
+
         let ignorar = false
 
         async function fetchBookedTimes() {
-            const response = await fetch(
-                `${apiUrl}/horariosOcupados?barber=${encodeURIComponent(barber)}&date=${encodeURIComponent(date)}`,
-                { credentials: 'include' }
+            const { data } = await apiFetch<{ times?: string[] }>(
+                `/horariosOcupados?barber=${encodeURIComponent(barber)}&date=${encodeURIComponent(date)}`
             )
-
-            const data = await response.json()
 
             if (!ignorar) {
                 setBookedTimes(data.times ?? [])
@@ -60,13 +57,10 @@ export function Agendamento () {
 
     async function handleConfirm() {
 
+        setSending(true)
 
-        const response = await fetch(`${apiUrl}/agendamento`, {
+        const { data } = await apiFetch('/agendamento', {
             method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            credentials: 'include',
             body: JSON.stringify({
                 user: user?.user,
                 phone: userPhone,
@@ -77,14 +71,14 @@ export function Agendamento () {
             })
         })
 
-        const data = await response.json()
-
         setConfirm(data.message)
 
-        // sem isso o horário recém-agendado continua aparecendo como livre
         setRecarregarHorarios((valor) => valor + 1)
 
+        setSending(false)
+
     }
+
 
     return (
         <>
@@ -140,10 +134,11 @@ export function Agendamento () {
                         ))}
                     </select>
                             
-                    <button 
+                    <button
                         className='botao-confirmacao'
                         onClick={handleConfirm}
-                    >Confirmar agendamento</button>
+                        disabled={sending}
+                    >{sending ? 'Enviando dados...' : 'Confirmar Agendamento'}</button>
 
                     
                     <div className='confirmacao-agendamento'>

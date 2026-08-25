@@ -4,13 +4,13 @@ import { connectDatabase } from './config/database.js'
 import authRoutes from './routes/auth.routes.js'
 import appointmentRoutes from './routes/appointment.routes.js'
 import smsRoutes from './routes/recovery.routes.js'
-import { port } from './config/env.js'
+import { origin, port } from './config/env.js'
 import cookieParser from 'cookie-parser'
 
 const app = express()
 
 app.use(cors({
-    origin: 'http://localhost:5173', 
+    origin: origin, 
     credentials: true
 }))
 app.use(express.json())

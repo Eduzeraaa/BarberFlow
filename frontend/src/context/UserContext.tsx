@@ -1,6 +1,6 @@
 import { createContext, useState, useContext, useEffect, useCallback } from 'react'
 import type { ReactNode } from 'react'
-import { apiUrl } from '../config/api'
+import { apiFetch } from '../config/apiFetch'
 
 type User = {
     user: string
@@ -29,20 +29,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const refreshUser = useCallback(async () => {
         setLoading(true)
 
-        try {
-            const response = await fetch(`${apiUrl}/perfil`, {
-                credentials: 'include'
-            })
+        const { ok, data } = await apiFetch<{ data?: User }>('/perfil')
 
-            const data = await response.json()
-
-            setUser(data.data ?? null)
-        } catch (error) {
-            console.error('Erro ao carregar user:', error)
-            setUser(null)
-        } finally {
-            setLoading(false)
-        }
+        setUser(ok ? (data.data ?? null) : null)
+        setLoading(false)
     }, [])
 
     useEffect(() => {

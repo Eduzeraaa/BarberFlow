@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { FaUser } from 'react-icons/fa'
 import { TbLock } from 'react-icons/tb' 
 import { useNavigate, Link } from 'react-router-dom'
-import { apiUrl } from '../config/api'
+import { apiFetch } from '../config/apiFetch'
 import { Header } from '../components/RoutesHeader/RoutesHeader'
 import { FaPhoneAlt } from "react-icons/fa";
 
@@ -32,11 +32,8 @@ export function Cadastro () {
 
         setError('')
 
-        const response = await fetch(`${apiUrl}/cadastro`, {
+        const { ok, data } = await apiFetch('/cadastro', {
             method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
             body: JSON.stringify({
                 user,
                 password,
@@ -44,13 +41,9 @@ export function Cadastro () {
             })
         })
 
-        const data = await response.json()
-
-        if (data.message === 'Cadastro realizado!'){
+        if (ok){
             redirect('/login', {
-                state: {
-                    message: data.message
-                }
+                state: {message: data.message}
             })
         }
 

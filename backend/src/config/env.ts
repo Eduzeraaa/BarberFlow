@@ -8,17 +8,31 @@ if (!DB_CONN_STRING) {
   throw new Error('DB_CONN_STRING is not defined')
 }
 
+
+
 const PORT = process.env.PORT
 
 if (!PORT) {
   throw new Error('PORT is not defined')
 }
 
+
+
 const jwt_secret = process.env.JWT_SECRET
 
 if (!jwt_secret) {
   throw new Error('JWT_SECRET is not defined')
 }
+
+
+const ORIGIN = process.env.ORIGIN
+
+if (!ORIGIN) {
+  throw new Error('ORIGIN is not defined')
+}
+
+
+export const origin: string = ORIGIN
 
 export const url: string = DB_CONN_STRING
 

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { FiLogIn } from "react-icons/fi";
 import { TbLock } from 'react-icons/tb' 
 import { useNavigate, useLocation } from 'react-router-dom'
-import { apiUrl } from '../config/api'
+import { apiFetch } from '../config/apiFetch'
 import { Link } from 'react-router-dom'
 import { Header } from '../components/RoutesHeader/RoutesHeader'
 import { useUser } from '../context/UserContext'
@@ -13,36 +13,34 @@ export function Login () {
     const [login, setLogin] = useState('')
     const [password, setPassword] = useState('')
     const [confirm, setConfirm] = useState('')
+    const [sending, setSending] = useState(false)
 
     const redirect = useNavigate()
     const location = useLocation()
     const { refreshUser } = useUser()
 
-    
     async function handleConfirm() {
-        
-        const response = await fetch(`${apiUrl}/login`, {
+
+        setSending(true)
+
+        const { ok, data } = await apiFetch('/login', {
             method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            credentials: 'include',
             body: JSON.stringify({
                 userOrPhone: login,
                 password,
             })
         })
-        
-        const data = await response.json()
 
-        if (data.message === 'Login efetuado com sucesso!'){
+        if (ok){
             await refreshUser()
             redirect('/agendamento')
         }
 
-        else{
+        else {
             setConfirm(data.message)
         }
+
+        setSending(false)
         
     }
     
@@ -90,10 +88,11 @@ export function Login () {
                         </div>
 
 
-                        <button 
-                            className='confirm-button'
+                        <button
+                            className='botao-confirmacao'
                             onClick={handleConfirm}
-                        >Confirmar</button>
+                            disabled={sending}
+                        >{sending ? 'Carregando...' : 'Confirmar'}</button>
 
                         <div className='confirmacao-login'>
                             <h2>{confirm}</h2>

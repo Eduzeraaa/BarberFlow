@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Header } from "../components/RoutesHeader/RoutesHeader"
-import { apiUrl } from "../config/api"
+import { apiFetch } from "../config/apiFetch"
 import './Admin.css'
 import { useNavigate } from 'react-router-dom'
 import { MdCancel } from "react-icons/md";
@@ -34,6 +34,7 @@ export function Admin () {
     const [novoAdminTelefone, setNovoAdminTelefone] = useState('')
     const [criarAdminMsg, setCriarAdminMsg] = useState('')
     const [criarAdminDeuCerto, setCriarAdminDeuCerto] = useState(false)
+    const [criandoAdmin, setCriandoAdmin] = useState(false)
 
     const redirect = useNavigate()
 
@@ -61,8 +62,6 @@ export function Admin () {
 
     const hoje = new Date().toISOString().split('T')[0]
 
-    // o filtro de barbeiro vale para as duas tabelas, por isso a divisão
-    // parte de filteredAppointments e não de appointments
     const proximos = filteredAppointments
         .filter((app) => app.date >= hoje)
         .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time))
@@ -73,24 +72,22 @@ export function Admin () {
 
     async function handleCriarAdmin() {
 
-        const response = await fetch(`${apiUrl}/criarAdmin`, {
+        setCriandoAdmin(true)
+
+        const { ok, data } = await apiFetch('/criarAdmin', {
             method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            credentials: 'include',
             body: JSON.stringify({
                 user: novoAdminNome,
                 phone: novoAdminTelefone
             })
         })
 
-        const data = await response.json()
+        setCriandoAdmin(false)
 
-        setCriarAdminDeuCerto(response.ok)
+        setCriarAdminDeuCerto(ok)
         setCriarAdminMsg(data.message)
 
-        if (response.ok) {
+        if (ok) {
             setNovoAdminNome('')
             setNovoAdminTelefone('')
         }
@@ -108,26 +105,24 @@ export function Admin () {
 
         setLoading(true)
 
-        const response = await fetch(`${apiUrl}/buscarAgendamentos`, {credentials: 'include'})
-        const data = await response.json()
+        const { ok, data } = await apiFetch<Appointment[]>('/buscarAgendamentos')
 
-        setAppointments(data)
+        if (ok) {
+            setAppointments(data)
+        } else {
+            setConfirm((data as any).message)
+        }
+
         setLoading(false)
 
     }
 
     async function handleConfirm(id: string) {
 
-        const response = await fetch(`${apiUrl}/cancelarAgendamento`, {
+        const { data } = await apiFetch('/cancelarAgendamento', {
             method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            credentials: 'include',
             body: JSON.stringify({ id })
         })
-
-        const data = await response.json()
 
         setConfirm(data.message)
 
@@ -238,6 +233,8 @@ export function Admin () {
                         </table>
                     </>
                 )}
+
+                {/* ========== agendamentos passados ========== */}
 
                 {anteriores.length > 0 && (
                     <>
@@ -358,8 +355,9 @@ export function Admin () {
                         <button
                             className="confirmar-novo-admin"
                             onClick={handleCriarAdmin}
+                            disabled={criandoAdmin}
                         >
-                            Criar
+                            {criandoAdmin ? 'Criando...' : 'Criar'}
                         </button>
 
                         <button

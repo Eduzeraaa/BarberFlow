@@ -5,7 +5,7 @@ import { RiCalendarScheduleFill } from 'react-icons/ri'
 import { MdAdminPanelSettings } from 'react-icons/md'
 import { FaCalendarDay } from "react-icons/fa";
 import { useLocation, useNavigate } from 'react-router-dom'
-import { apiUrl } from '../../config/api'
+import { apiFetch } from '../../config/apiFetch'
 import { useUser } from '../../context/UserContext'
 
 export function Menu() {
@@ -24,10 +24,7 @@ export function Menu() {
     }
 
     async function handleLogout() {
-        await fetch(`${apiUrl}/logout`, {
-            method: 'POST',
-            credentials: 'include'
-        })
+        await apiFetch('/logout', { method: 'POST' })
         await refreshUser()
         redirect('/login')
     }

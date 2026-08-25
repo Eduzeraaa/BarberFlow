@@ -3,7 +3,7 @@ import { Header } from '../components/RoutesHeader/RoutesHeader'
 import { FaPhoneAlt } from "react-icons/fa"
 import { TbLock } from 'react-icons/tb'
 import { useState, useEffect } from 'react'
-import { apiUrl } from '../config/api'
+import { apiFetch } from '../config/apiFetch'
 import { useNavigate } from 'react-router-dom'
 import { MdOutlineTextsms } from "react-icons/md";
 
@@ -17,6 +17,7 @@ export function Recuperar() {
     const [message, setMessage] = useState('')
     const [cooldownSeconds, setCooldownSeconds] = useState(0)
     const [precisaNovoCodigo, setPrecisaNovoCodigo] = useState(false)
+    const [sending, setSending] = useState(false)
 
     const redirect = useNavigate()
 
@@ -30,14 +31,14 @@ export function Recuperar() {
             return
         }
 
-        const response = await fetch(`${apiUrl}/recovery/request`, {
+        setSending(true)
+
+        const { data } = await apiFetch('/recovery/request', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
             body: JSON.stringify({ phone })
         })
 
-        const data = await response.json()
+        setSending(false)
 
         if (data.success) {
             setPrecisaNovoCodigo(false)
@@ -78,10 +79,10 @@ export function Recuperar() {
             return
         }
 
-        const response = await fetch(`${apiUrl}/recovery/reset`, {
+        setSending(true)
+
+        const { data } = await apiFetch('/recovery/reset', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
             body: JSON.stringify({
                 phone,
                 code,
@@ -90,7 +91,8 @@ export function Recuperar() {
             })
         })
 
-        const data = await response.json()
+        setSending(false)
+
         setMessage(data.message)
 
         if (data.success) {
@@ -99,7 +101,10 @@ export function Recuperar() {
             setCode('')
             setNewPassword('')
             setConfirmPassword('')
-            redirect('/login')
+
+            // o segundo argumento do navigate vira location.state na tela
+            // de destino. o Login já lê location.state?.message e mostra.
+            redirect('/login', { state: { message: data.message } })
             return
         }
 
@@ -134,8 +139,10 @@ export function Recuperar() {
                                 />
                             </div>
 
-                            <button onClick={handleRequestCode} disabled={emCooldown}>
-                                {emCooldown ? `Aguarde ${cooldownSeconds}s` : 'Solicitar Código'}
+                            <button onClick={handleRequestCode} disabled={emCooldown || sending}>
+                                {emCooldown
+                                    ? `Aguarde ${cooldownSeconds}s`
+                                    : sending ? 'Enviando...' : 'Solicitar Código'}
                             </button>
                         </>
                     ) : (
@@ -177,12 +184,14 @@ export function Recuperar() {
                             </div>
 
                             {precisaNovoCodigo ? (
-                                <button onClick={handleRequestCode} disabled={emCooldown}>
-                                    {emCooldown ? `Aguarde ${cooldownSeconds}s` : 'Pedir novo código'}
+                                <button onClick={handleRequestCode} disabled={emCooldown || sending}>
+                                    {emCooldown
+                                        ? `Aguarde ${cooldownSeconds}s`
+                                        : sending ? 'Enviando...' : 'Pedir novo código'}
                                 </button>
                             ) : (
-                                <button onClick={handleResetPassword}>
-                                    Resetar Senha
+                                <button onClick={handleResetPassword} disabled={sending}>
+                                    {sending ? 'Enviando...' : 'Resetar Senha'}
                                 </button>
                             )}
                         </>

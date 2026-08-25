@@ -8,15 +8,13 @@ import { normalizePhone } from '../utils/phone.js'
 export async function requestRecovery(request: Request, response: Response)  {
 
     if (!request.body.phone) {
-        return response.json({ success: false, message: 'Informe seu telefone.' })
+        return response.status(400).json({ success: false, message: 'Informe seu telefone.' })
     }
 
-    // a partir daqui só existe a forma normalizada, para o cooldown, a
-    // busca do usuário e o código ficarem todos sob a mesma chave
     const phone = normalizePhone(request.body.phone)
 
     if (!phone) {
-        return response.json({ success: false, message: 'Telefone inválido.' })
+        return response.status(400).json({ success: false, message: 'Telefone inválido.' })
     }
 
     const existingRequest = await recovery.findOne({ phone })
@@ -38,7 +36,7 @@ export async function requestRecovery(request: Request, response: Response)  {
     const searchResult = await users.findOne({phone})
 
     if (searchResult === null){
-        return response.json({
+        return response.status(400).json({
             success: false,
             message: 'Este número não está cadastrado. Verifique se o número está correto.'
         })
@@ -52,7 +50,7 @@ export async function requestRecovery(request: Request, response: Response)  {
 
     await sendSMS(phone, code)
 
-    response.json({
+    response.status(200).json({
         success: true,
         message: 'Um código será enviado para o seu telefone via SMS!'
     })
@@ -65,7 +63,7 @@ export async function resetPassword(request: Request, response: Response) {
     const {code, newPassword, confirmNewPassword} = request.body
 
     if (!request.body.phone) {
-        return response.json({ success: false, message: 'Informe seu telefone.' })
+        return response.status(400).json({ success: false, message: 'Informe seu telefone.' })
     }
 
     // mesma normalização do requestRecovery: o código foi salvo sob a
@@ -79,21 +77,21 @@ export async function resetPassword(request: Request, response: Response) {
     // se válido, atualiza senha no banco
 
     if (!validate.valid) {
-        return response.json({
+        return response.status(400).json({
             success: false,
             message: validate.reason
         })
     }
 
     if (newPassword.length < 8) {
-        return response.json({
+        return response.status(400).json({
             success: false,
             message: 'Senha deve ter no mínimo 8 caracteres.'
         })
     }
 
 if (newPassword !== confirmNewPassword) {
-    return response.json({
+    return response.status(400).json({
         success: false,
         message: 'As senhas são diferentes.'
     })
@@ -109,7 +107,7 @@ if (newPassword !== confirmNewPassword) {
 
     await deleteCode(phone)
 
-    response.json({
+    response.status(200).json({
         success: true,
         message: 'Senha alterada com sucesso!'
     })
