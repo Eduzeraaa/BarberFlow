@@ -1,10 +1,14 @@
 import type { Request, Response } from 'express'
 import { ObjectId } from 'mongodb'
-import { agendamentos } from '../config/database.js'
+import { agendamentos, barbers, services } from '../config/database.js'
 
-const SERVICOS = ['Barba', 'Degradê', 'Social']
-const BARBEIROS = ['José', 'Roberto', 'Cláudio']
 const HORARIOS = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30']
+
+
+
+// ==================================================================================================================================================================
+
+
 
 export async function createAppointment(request: Request, response: Response) {
     const { service, barber, date, time } = request.body
@@ -23,11 +27,15 @@ export async function createAppointment(request: Request, response: Response) {
         return
     }
 
-    if (!SERVICOS.includes(service)) {
+    const servicoExiste = await services.findOne({ service })
+
+    if (servicoExiste === null) {
         return response.status(400).json({ message: 'Não oferecemos esse serviço.' })
     }
 
-    if (!BARBEIROS.includes(barber)) {
+    const barbeiroExiste = await barbers.findOne({ barber })
+
+    if (barbeiroExiste === null) {
         return response.status(400).json({ message: 'Esse barbeiro não é nosso funcionário.' })
     }
 
@@ -70,11 +78,20 @@ export async function createAppointment(request: Request, response: Response) {
     })
 }
 
+
+// ==================================================================================================================================================================
+
+
 export async function getAppointment(request: Request, response: Response) {
     const allAppointments = await agendamentos.find().toArray()
 
     response.json(allAppointments)
 }
+
+
+// ==================================================================================================================================================================
+
+
 
 export async function getBookedTimes(request: Request, response: Response) {
     const barber = request.query.barber
@@ -90,6 +107,11 @@ export async function getBookedTimes(request: Request, response: Response) {
         times: ocupados.map((agendamento) => agendamento.time)
     })
 }
+
+
+// ==================================================================================================================================================================
+
+
 
 export async function cancelAppointment(request: Request, response: Response) {
     const { id } = request.body
@@ -124,6 +146,10 @@ export async function cancelAppointment(request: Request, response: Response) {
         message: `Agendamento cancelado com sucesso!`
     })
 }
+
+
+// ==================================================================================================================================================================
+
 
 export async function getMyAppointments(request: Request, response: Response) {
 

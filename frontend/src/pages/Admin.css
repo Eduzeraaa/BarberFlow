@@ -259,49 +259,88 @@
    formulário, aviso e resultado, não só uma pergunta de sim/não.
    Vem depois da regra compartilhada, então ganha dela. */
 .criar-admin-modal {
-    max-width: 500px;
-    padding: var(--space-7);
+    max-width: 340px;
+    padding: 0;
+    gap: 0;
+    overflow: hidden;
+}
+
+.abas-modal {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+}
+
+.aba {
+    padding: var(--space-3) var(--space-2);
+
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--text-muted);
+
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+}
+
+.aba:hover {
+    color: var(--text);
+    background: var(--surface);
+}
+
+.aba.ativa {
+    color: var(--text-strong);
+    border-bottom-color: var(--accent);
+}
+
+.corpo-modal {
+    display: flex;
+    flex-direction: column;
     gap: var(--space-4);
+    padding: var(--space-5);
 }
 
-@media (max-width: 560px) {
-    .criar-admin-modal {
-        padding: var(--space-5);
-    }
+/* Os botoes daqui herdam regras compartilhadas com o modal de
+   cancelamento. Reduzimos so dentro deste corpo para nao encolher o
+   outro modal junto. */
+.corpo-modal button {
+    font-size: var(--text-sm);
 }
 
-.criar-admin-modal h2 {
-    margin-bottom: var(--space-2);
-    font-size: var(--text-3xl);
-}
-
-.campo-novo-admin {
+.campo-novo-admin,
+.campo-novo-servico {
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
     text-align: left;
 }
 
-.campo-novo-admin label {
-    font-size: 25px;
+.campo-novo-admin label,
+.campo-novo-servico label {
+    font-size: var(--text-sm);
     font-weight: 500;
     color: var(--text);
 }
 
-.campo-novo-admin input {
+.campo-novo-admin input,
+.campo-novo-servico input {
     width: 100%;
-    font-size: 23px;
+    font-size: var(--text-sm);
+    padding: var(--space-2) var(--space-3);
     background: var(--bg);
 }
 
-.aviso-novo-admin {
-    font-size: 19px;
+.aviso-novo-admin,
+.aviso-novo-servico {
+    font-size: var(--text-xs);
     line-height: 1.5;
     text-align: left;
     color: var(--text-muted);
 }
 
-.resultado-novo-admin {
+.resultado-novo-admin,
+.resultado-novo-servico {
     padding: var(--space-3) var(--space-4);
 
     font-size: var(--text-sm);
@@ -312,12 +351,14 @@
     border-left: 3px solid;
 }
 
-.resultado-novo-admin.sucesso {
+.resultado-novo-admin.sucesso,
+.resultado-novo-servico.sucesso {
     color: var(--success);
     background: rgba(74, 222, 128, 0.1);
 }
 
-.resultado-novo-admin.erro {
+.resultado-novo-admin.erro,
+.resultado-novo-servico.erro {
     color: var(--danger);
     background: rgba(239, 68, 68, 0.1);
 }

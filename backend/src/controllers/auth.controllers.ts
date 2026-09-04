@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
-import { users } from '../config/database.js'
+import { barbers, users } from '../config/database.js'
 import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from '../config/env.js'
 import { normalizePhone } from '../utils/phone.js'
@@ -59,6 +59,10 @@ export async function signup(request: Request, response: Response) {
     }
 }
 
+
+// ==================================================================================================================================================================
+
+
 export async function login(request: Request, response: Response) {
     
     const { userOrPhone, password } = request.body
@@ -114,6 +118,10 @@ export async function login(request: Request, response: Response) {
     })
 }
 
+
+// ==================================================================================================================================================================
+
+
 export async function createAdmin (request:Request, response:Response){
 
     const {user, phone} = request.body
@@ -146,6 +154,8 @@ export async function createAdmin (request:Request, response:Response){
 
         await users.insertOne({user, role:'admin', password: hashPassword, phone: phoneNormalizado})
 
+        await barbers.insertOne({barber: user})
+
         response.status(201).json({
             message: 'Admin criado!',
         })
@@ -164,6 +174,10 @@ export async function createAdmin (request:Request, response:Response){
     }
 
 }
+
+
+// ==================================================================================================================================================================
+
 
 export function logout (request: Request, response: Response) {
 

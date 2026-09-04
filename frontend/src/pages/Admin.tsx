@@ -36,6 +36,14 @@ export function Admin () {
     const [criarAdminDeuCerto, setCriarAdminDeuCerto] = useState(false)
     const [criandoAdmin, setCriandoAdmin] = useState(false)
 
+    const [abaAtiva, setAbaAtiva] = useState<'barbeiro' | 'servico'>('barbeiro')
+
+    const [novoServicoNome, setNovoServicoNome] = useState('')
+    const [criarServicoMsg, setCriarServicoMsg] = useState('')
+    const [criarServicoDeuCerto, setCriarServicoDeuCerto] = useState(false)
+    const [criandoServico, setCriandoServico] = useState(false)
+
+
     const redirect = useNavigate()
 
     const userRole = String(user?.role)
@@ -96,12 +104,35 @@ export function Admin () {
 
     }
 
-    function fecharCriarAdmin() {
+    async function handleCriarServico() {
+
+        setCriandoServico(true)
+
+        const { ok, data } = await apiFetch('/criarServico', {
+            method: 'POST',
+            body: JSON.stringify({service: novoServicoNome})
+        })
+
+        setCriandoServico(false)
+
+        setCriarServicoDeuCerto(ok)
+        setCriarServicoMsg(data.message)
+
+        if (ok) {
+            setNovoServicoNome('')
+        }
+
+    }
+
+    function fecharCriarAlgo() {
         setCriarAdminOpen(false)
         setCriarAdminMsg('')
         setNovoAdminNome('')
         setNovoAdminTelefone('')
+        setCriarServicoMsg('')
+        setNovoServicoNome('')
     }
+
 
     async function loadAppointments() {
 
@@ -321,53 +352,106 @@ export function Admin () {
 
                     <div className="criar-admin-modal">
 
-                        <h2>Novo administrador</h2>
-
-                        <div className='campo-novo-admin'>
-                            <label>Nome</label>
-                            <input
-                                type="text"
-                                placeholder='Nome do administrador'
-                                value={novoAdminNome}
-                                onChange={(event) => setNovoAdminNome(event.target.value)}
-                            />
+                        <div className='abas-modal'>
+                            <button
+                                className={abaAtiva === 'barbeiro' ? 'aba ativa' : 'aba'}
+                                onClick={() => setAbaAtiva('barbeiro')}
+                            >
+                                Barbeiro
+                            </button>
+                            <button
+                                className={abaAtiva === 'servico' ? 'aba ativa' : 'aba'}
+                                onClick={() => setAbaAtiva('servico')}
+                            >
+                                Serviço
+                            </button>
                         </div>
 
-                        <div className='campo-novo-admin'>
-                            <label>Telefone</label>
-                            <input
-                                type="text"
-                                placeholder='Telefone para contato'
-                                value={novoAdminTelefone}
-                                onChange={(event) => setNovoAdminTelefone(event.target.value)}
-                            />
+                        <div className='corpo-modal'>
+
+                            {abaAtiva === 'barbeiro' && (
+                                <>
+                                    <div className='campo-novo-admin'>
+                                        <label>Nome</label>
+                                        <input
+                                            type="text"
+                                            placeholder='Nome do barbeiro'
+                                            value={novoAdminNome}
+                                            onChange={(event) => setNovoAdminNome(event.target.value)}
+                                        />
+                                    </div>
+
+                                    <div className='campo-novo-admin'>
+                                        <label>Telefone</label>
+                                        <input
+                                            type="text"
+                                            placeholder='Telefone para contato'
+                                            value={novoAdminTelefone}
+                                            onChange={(event) => setNovoAdminTelefone(event.target.value)}
+                                        />
+                                    </div>
+
+                                    <p className='aviso-novo-admin'>
+                                        A senha não é definida aqui. Depois de criar, peça para
+                                        que ele entre em "Esqueci a senha" e defina a dele.
+                                    </p>
+
+                                    {criarAdminMsg && (
+                                        <p className={criarAdminDeuCerto ? 'resultado-novo-admin sucesso' : 'resultado-novo-admin erro'}>
+                                            {criarAdminMsg}
+                                        </p>
+                                    )}
+
+                                    <button
+                                        className="confirmar-novo-admin"
+                                        onClick={handleCriarAdmin}
+                                        disabled={criandoAdmin}
+                                    >
+                                        {criandoAdmin ? 'Criando...' : 'Criar barbeiro'}
+                                    </button>
+                                </>
+                            )}
+
+                            {abaAtiva === 'servico' && (
+                                <>
+                                    <div className='campo-novo-servico'>
+                                        <label>Nome do Serviço</label>
+                                        <input
+                                            type="text"
+                                            placeholder='Nome do serviço'
+                                            value={novoServicoNome}
+                                            onChange={(event) => setNovoServicoNome(event.target.value)}
+                                        />
+                                    </div>
+
+                                    <p className='aviso-novo-servico'>
+                                        O serviço será automaticamente adicionado aos agendamentos. Confira se tudo está certo antes de confirmar.
+                                    </p>
+
+                                    {criarServicoMsg && (
+                                        <p className={criarServicoDeuCerto ? 'resultado-novo-servico sucesso' : 'resultado-novo-servico erro'}>
+                                            {criarServicoMsg}
+                                        </p>
+                                    )}
+
+                                    <button
+                                        className="confirmar-novo-admin"
+                                        onClick={handleCriarServico}
+                                        disabled={criandoServico}
+                                    >
+                                        {criandoServico ? 'Criando...' : 'Criar serviço'}
+                                    </button>
+                                </>
+                            )}
+
+                            <button
+                                className="cancelar-cancelamento"
+                                onClick={fecharCriarAlgo}
+                            >
+                                Fechar
+                            </button>
+
                         </div>
-
-                        <p className='aviso-novo-admin'>
-                            A senha não é definida aqui. Depois de criar, peça para
-                            que ele entre em "Esqueci a senha" e defina a dele.
-                        </p>
-
-                        {criarAdminMsg && (
-                            <p className={criarAdminDeuCerto ? 'resultado-novo-admin sucesso' : 'resultado-novo-admin erro'}>
-                                {criarAdminMsg}
-                            </p>
-                        )}
-
-                        <button
-                            className="confirmar-novo-admin"
-                            onClick={handleCriarAdmin}
-                            disabled={criandoAdmin}
-                        >
-                            {criandoAdmin ? 'Criando...' : 'Criar'}
-                        </button>
-
-                        <button
-                            className="cancelar-cancelamento"
-                            onClick={fecharCriarAdmin}
-                        >
-                            Fechar
-                        </button>
 
                     </div>
 

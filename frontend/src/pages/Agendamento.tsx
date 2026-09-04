@@ -5,6 +5,16 @@ import { apiFetch } from '../config/apiFetch';
 import { Header } from '../components/RoutesHeader/RoutesHeader';
 import { useUser } from '../context/UserContext'
 
+type Barbeiro = {
+    _id: string
+    barber: string
+}
+
+type Servico = {
+    _id: string
+    service: string
+}
+
 export function Agendamento () {
 
     const { user, loading } = useUser()
@@ -17,6 +27,8 @@ export function Agendamento () {
     const [sending, setSending] = useState(false)
     const [bookedTimes, setBookedTimes] = useState<string[]>([])
     const [recarregarHorarios, setRecarregarHorarios] = useState(0)
+    const [barbeiros, setBarbeiros] = useState<Barbeiro[]>([])
+    const [servicos, setServicos] = useState<Servico[]>([])
 
     const hoje = new Date().toISOString().split('T')[0]
     const redirect = useNavigate()
@@ -53,6 +65,37 @@ export function Agendamento () {
 
         return () => { ignorar = true }
     }, [barber, date, recarregarHorarios])
+
+    useEffect(() => {
+
+        async function allTheBarbers() {
+        
+            const { ok, data } = await apiFetch<Barbeiro[]>('/barbeiros')
+
+            if (ok) {
+                setBarbeiros(data)
+            }
+
+        }
+
+        allTheBarbers()
+
+    }, [])
+
+    useEffect(() => {
+
+        async function allTheServices() {
+            
+            const { ok, data } = await apiFetch<Servico[]>('/servicos')
+
+            if (ok){
+                setServicos(data)
+            }
+        }
+
+        allTheServices()
+
+    }, [])
 
 
     async function handleConfirm() {
@@ -98,17 +141,23 @@ export function Agendamento () {
                     <h2 className='subtitle'>Serviço</h2>
                     <select className='servico' onChange={(event) => setService(event.target.value)}>
                         <option value="escolha-service">Escolha um serviço:</option>
-                        <option value="Barba">Barba</option>
-                        <option value="Degradê">Degradê</option>
-                        <option value="Social">Social</option>
+                        {servicos.map(servico => (
+                            <option
+                                key={servico._id}
+                                value={servico.service}
+                            >{servico.service}</option>
+                        ))}
                     </select>
                 
                     <h2 className='subtitle'>Barbeiro</h2>
                     <select className='barber' onChange={(event) => setBarber(event.target.value)}>
                         <option value="escolha-barber">Escolha um barbeiro:</option>
-                        <option value="José">José</option>
-                        <option value="Roberto">Roberto</option>
-                        <option value="Cláudio">Cláudio</option>
+                        {barbeiros.map(barbeiro => (
+                            <option
+                                key={barbeiro._id}
+                                value={barbeiro.barber}
+                            >{barbeiro.barber}</option>
+                        ))}
                     </select>
 
                     <h2 className='subtitle'>Data</h2>
