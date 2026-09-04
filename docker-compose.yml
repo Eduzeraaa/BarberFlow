@@ -1,0 +1,109 @@
+# Nao existe mais a chave "version:" no topo. Tutoriais antigos ainda mostram,
+# mas o Compose atual ignora e avisa que esta obsoleta.
+
+services:
+
+  # ---------------------------------------------------------------
+  # MONGO — banco de dados
+  # ---------------------------------------------------------------
+  mongo:
+    # "image" usa uma imagem pronta do Docker Hub. Por isso o Mongo nao
+    # tem Dockerfile: nao ha nada nosso pra construir.
+    image: mongo:7
+
+    ports:
+      # "host:container". So precisa disso se voce quiser abrir o banco
+      # do Windows com o MongoDB Compass. Backend e Mongo conversam pela
+      # rede interna, que nao usa porta publicada.
+      - "27017:27017"
+
+    volumes:
+      # Volume NOMEADO: o Docker guarda numa area dele, fora do projeto.
+      # /data/db e onde a imagem oficial do Mongo grava os dados.
+      # Sem esta linha, todo "docker compose down" apagaria o banco.
+      - mongo-data:/data/db
+
+  # ---------------------------------------------------------------
+  # BACKEND — Express + tsx watch
+  # ---------------------------------------------------------------
+  backend:
+    # "build" constroi a imagem a partir do Dockerfile desta pasta.
+    build: ./backend
+
+    ports:
+      - "3000:3000"
+
+    env_file:
+      # Le o .env inteiro e injeta como variaveis de ambiente.
+      - ./backend/.env
+
+    environment:
+      # Sobrescreve UMA variavel do env_file acima (o que vem aqui vence).
+      # "mongo" e o nome do servico la em cima: dentro da rede do Compose,
+      # os conteineres se acham pelo nome, nao por IP nem por localhost.
+      # Aqui NAO pode ser localhost — dentro deste conteiner, localhost
+      # seria o proprio backend.
+      - DB_CONN_STRING=mongodb://mongo:27017
+
+      # O Windows nao propaga eventos de "arquivo mudou" para dentro do
+      # conteiner Linux, entao o watcher nunca fica sabendo. Com polling
+      # ele para de esperar aviso e vai conferir sozinho de tempos em
+      # tempos. Gasta um pouco mais de CPU, mas atravessa a fronteira.
+      - CHOKIDAR_USEPOLLING=true
+
+    volumes:
+      # 1) BIND MOUNT: liga a pasta do seu Windows a /app do conteiner.
+      #    E o que faz o hot reload funcionar — voce salva o arquivo aqui,
+      #    o tsx watch enxerga la dentro e reinicia.
+      - ./backend:/app
+
+      # 2) VOLUME ANONIMO: resolve um efeito colateral da linha acima.
+      #    O bind mount cobre TUDO que existia em /app, inclusive o
+      #    node_modules criado pelo "npm ci" durante o build. Sem esta
+      #    linha, o conteiner passaria a usar o node_modules do Windows —
+      #    e o bcrypt e modulo NATIVO, compilado pro sistema onde foi
+      #    instalado. Binario de Windows nao roda em Linux.
+      #    Esta linha diz: "/app/node_modules fica de fora do mount".
+      - /app/node_modules
+
+    depends_on:
+      # Garante que o mongo suba ANTES do backend.
+      # Atencao: garante a ordem de inicio, nao que o Mongo ja esteja
+      # pronto pra aceitar conexao. Se o backend reclamar na primeira
+      # subida, e so isso — sobe de novo.
+      - mongo
+
+  # ---------------------------------------------------------------
+  # FRONTEND — Vite
+  # ---------------------------------------------------------------
+  frontend:
+    build: ./frontend
+
+    ports:
+      - "5173:5173"
+
+    env_file:
+      # Contem o VITE_API_URL. Ele continua apontando pra
+      # http://localhost:3000 e NAO pra http://backend:3000 — porque o
+      # React roda no navegador do usuario, que nao conhece a rede do
+      # Docker. Quem fala com o backend e o navegador, nao o conteiner.
+      - ./frontend/.env
+
+    environment:
+      # Mesmo motivo do backend: sem polling o Vite nao percebe suas
+      # alteracoes vindas do Windows.
+      - CHOKIDAR_USEPOLLING=true
+
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+    # Sem depends_on: o conteiner do frontend nao conversa com o backend.
+    # Ele so entrega os arquivos pro navegador.
+
+# -------------------------------------------------------------------
+# Todo volume NOMEADO usado acima precisa ser declarado aqui embaixo.
+# Volume anonimo (/app/node_modules) nao precisa.
+# -------------------------------------------------------------------
+volumes:
+  mongo-data:

@@ -38,7 +38,9 @@ export function Admin () {
 
     const redirect = useNavigate()
 
-    const userRole = user?.role
+    const userRole = String(user?.role)
+
+    const adminRoles:string[] = ['admin', 'dev']
         
     useEffect(() => {
 
@@ -50,7 +52,7 @@ export function Admin () {
             redirect('/login')
         }
 
-        if (user !== null && userRole !== 'admin'){
+        if (user !== null && !adminRoles.includes(userRole)){
             redirect('/agendamento')
         }
 
@@ -139,7 +141,7 @@ export function Admin () {
 
             <div className="header-admin">
 
-                <h1>Dados e Estatísticas</h1>
+                <h1>Agendamentos</h1>
 
                 <div className="controls-admin">
                     <button
@@ -209,7 +211,7 @@ export function Admin () {
 
                                         <td>
 
-                                            {appointment.status === true && (
+                                            {appointment.status === true && appointment.barber === user?.user &&(
                                                 <button
                                                     className='botao-cancelamento'
                                                     title='Cancelar agendamento'

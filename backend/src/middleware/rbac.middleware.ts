@@ -2,7 +2,10 @@ import { NextFunction, Request, Response } from 'express'
 
 export function verificarRole(request: Request, response: Response, next: NextFunction) {
 
-    if (request.user?.role !== 'admin'){
+    const admin = 'admin'
+    const dev = 'dev'
+
+    if (request.user?.role !== String(admin) && request.user?.role !== String(dev)){
         return response.status(403).json({ message: 'Acesso negado' })
     } 
 

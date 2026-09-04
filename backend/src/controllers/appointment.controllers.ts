@@ -108,11 +108,11 @@ export async function cancelAppointment(request: Request, response: Response) {
         return response.status(404).json({ message: 'Agendamento não encontrado.' })
     }
 
-    const ehAdmin = request.user.role === 'admin'
-    const ehDono = appointment.phone === request.user.phone
+    const ehCliente = appointment.phone === request.user.phone
+    const ehBarbeiroDoHorario = appointment.barber === request.user.user
 
-    if (!ehAdmin && !ehDono) {
-        return response.status(403).json({ message: 'Você só pode cancelar os seus agendamentos.' })
+    if (!ehCliente && !ehBarbeiroDoHorario) {
+        return response.status(403).json({ message: 'Você não pode cancelar este agendamento.' })
     }
 
     await agendamentos.updateOne(
