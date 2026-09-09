@@ -6,6 +6,12 @@ import { useNavigate } from 'react-router-dom'
 import { MdCancel } from "react-icons/md";
 import { IoMdAddCircle } from "react-icons/io";
 import { useUser } from '../context/UserContext'
+import { dataDeHoje } from '../utils/data'
+
+export type Barbeiro = {
+    _id: string
+    barber: string
+}
 
 export interface Appointment {
     _id: string,
@@ -28,6 +34,7 @@ export function Admin () {
     const [confirm, setConfirm] = useState('')
     const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
     const [filterBarber, setFilterBarber] = useState('')
+    const [barbeiros, setBarbeiros] = useState<Barbeiro[]>([])
 
     const [criarAdminOpen, setCriarAdminOpen] = useState(false)
     const [novoAdminNome, setNovoAdminNome] = useState('')
@@ -70,7 +77,7 @@ export function Admin () {
         ? appointments.filter(apt => apt.barber === filterBarber)
         : appointments
 
-    const hoje = new Date().toISOString().split('T')[0]
+    const hoje = dataDeHoje()
 
     const proximos = filteredAppointments
         .filter((app) => app.date >= hoje)
@@ -165,6 +172,30 @@ export function Admin () {
 
     }
 
+    useEffect(() => {
+    
+            async function allTheBarbers() {
+            
+                const { ok, data } = await apiFetch<Barbeiro[]>('/barbeiros')
+    
+                if (ok) {
+                    setBarbeiros(data)
+                }
+    
+            }
+    
+            allTheBarbers()
+    
+        }, [])
+
+
+
+
+
+        // =============================================================================================================================
+        // =========================================================== FRONT ===========================================================
+        // =============================================================================================================================
+
     return (
         <>
             
@@ -188,9 +219,12 @@ export function Admin () {
                         onChange={(e) => setFilterBarber(e.target.value)}
                     >
                         <option value="">Todos os barbeiros</option>
-                        <option value="José">José</option>
-                        <option value="Roberto">Roberto</option>
-                        <option value="Cláudio">Cláudio</option>
+                        {barbeiros.map (barbeiro => (
+                            <option 
+                                key={barbeiro._id}
+                                value={barbeiro.barber}
+                            >{barbeiro.barber}</option>
+                        ))}
                     </select>
 
                     <button
@@ -242,7 +276,7 @@ export function Admin () {
 
                                         <td>
 
-                                            {appointment.status === true && appointment.barber === user?.user &&(
+                                            {appointment.status === true && appointment.barber === user?.user || appointment.status === true && user?.role === 'dev' &&(
                                                 <button
                                                     className='botao-cancelamento'
                                                     title='Cancelar agendamento'

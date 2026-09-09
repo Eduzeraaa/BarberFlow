@@ -133,7 +133,7 @@ export async function cancelAppointment(request: Request, response: Response) {
     const ehCliente = appointment.phone === request.user.phone
     const ehBarbeiroDoHorario = appointment.barber === request.user.user
 
-    if (!ehCliente && !ehBarbeiroDoHorario) {
+    if (!ehCliente && !ehBarbeiroDoHorario && request.user?.role !== 'dev') {
         return response.status(403).json({ message: 'Você não pode cancelar este agendamento.' })
     }
 

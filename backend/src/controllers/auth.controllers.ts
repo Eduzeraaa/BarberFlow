@@ -67,7 +67,7 @@ export async function login(request: Request, response: Response) {
     
     const { userOrPhone, password } = request.body
 
-    if (!userOrPhone || !password) {
+    if (!userOrPhone || typeof userOrPhone !== 'string' || !password) {
         return response.status(400).json({
             message: 'Informe login e senha.'
         })

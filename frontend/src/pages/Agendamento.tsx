@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { apiFetch } from '../config/apiFetch';
 import { Header } from '../components/RoutesHeader/RoutesHeader';
 import { useUser } from '../context/UserContext'
+import { dataDeHoje } from '../utils/data'
 
 type Barbeiro = {
     _id: string
@@ -30,7 +31,7 @@ export function Agendamento () {
     const [barbeiros, setBarbeiros] = useState<Barbeiro[]>([])
     const [servicos, setServicos] = useState<Servico[]>([])
 
-    const hoje = new Date().toISOString().split('T')[0]
+    const hoje = dataDeHoje()
     const redirect = useNavigate()
 
     

@@ -5,6 +5,7 @@ import './MeusAgendamentos.css'
 import { useNavigate } from 'react-router-dom'
 import { MdCancel } from "react-icons/md"
 import { useUser } from '../context/UserContext'
+import { dataDeHoje } from '../utils/data'
 import type { Appointment } from './Admin'
 
 export function MeusAgendamentos () {
@@ -72,7 +73,7 @@ export function MeusAgendamentos () {
 
     }
 
-    const hoje = new Date().toISOString().split('T')[0]
+    const hoje = dataDeHoje()
 
     const proximos = appointments
         .filter((app) => app.date >= hoje)
