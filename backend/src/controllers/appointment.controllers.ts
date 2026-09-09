@@ -1,8 +1,11 @@
 import type { Request, Response } from 'express'
 import { ObjectId } from 'mongodb'
 import { agendamentos, barbers, services } from '../config/database.js'
+import { HORARIOS } from '../config/horarios.js'
 
-const HORARIOS = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30']
+export async function getHorarios(request: Request, response: Response) {
+    response.status(200).json(HORARIOS)
+}
 
 
 
@@ -29,13 +32,17 @@ export async function createAppointment(request: Request, response: Response) {
 
     const servicoExiste = await services.findOne({ service })
 
-    if (servicoExiste === null) {
+    const servicoEstaAtivo = await services.findOne({service: service, active: false})
+
+    if (servicoExiste === null || servicoEstaAtivo === null) {
         return response.status(400).json({ message: 'Não oferecemos esse serviço.' })
     }
 
     const barbeiroExiste = await barbers.findOne({ barber })
 
-    if (barbeiroExiste === null) {
+    const barbeiroEstaAtivo = await barbers.findOne({barber: barber, active: false})
+
+    if (barbeiroExiste === null || barbeiroEstaAtivo === null) {
         return response.status(400).json({ message: 'Esse barbeiro não é nosso funcionário.' })
     }
 

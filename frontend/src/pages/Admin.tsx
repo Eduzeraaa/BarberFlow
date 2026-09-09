@@ -13,6 +13,11 @@ export type Barbeiro = {
     barber: string
 }
 
+export type Servico = {
+    _id: string
+    service: string
+}
+
 export interface Appointment {
     _id: string,
     user: string,
@@ -35,13 +40,21 @@ export function Admin () {
     const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
     const [filterBarber, setFilterBarber] = useState('')
     const [barbeiros, setBarbeiros] = useState<Barbeiro[]>([])
+    const [servicos, setServicos] = useState<Servico[]>([])
 
-    const [criarAdminOpen, setCriarAdminOpen] = useState(false)
+    const [modalGerencia, setModalGerencia] = useState(false)
+    const [excluirAdminOpen, setExcluirAdminOpen] = useState(false)
+    const [excluirServicoOpen, setExcluirServicoOpen] = useState(false)
     const [novoAdminNome, setNovoAdminNome] = useState('')
     const [novoAdminTelefone, setNovoAdminTelefone] = useState('')
     const [criarAdminMsg, setCriarAdminMsg] = useState('')
     const [criarAdminDeuCerto, setCriarAdminDeuCerto] = useState(false)
     const [criandoAdmin, setCriandoAdmin] = useState(false)
+    const [barberToDeactivated, setBarberToBeDeactivated] = useState('')
+    const [serviceToDeactivated, setServiceToBeDeactivated] = useState('')
+    const [desativarMsg, setDesativarMsg] = useState('')
+    const [desativarDeuCerto, setDesativarDeuCerto] = useState(false)
+    const [desativando, setDesativando] = useState(false)
 
     const [abaAtiva, setAbaAtiva] = useState<'barbeiro' | 'servico'>('barbeiro')
 
@@ -91,7 +104,7 @@ export function Admin () {
 
         setCriandoAdmin(true)
 
-        const { ok, data } = await apiFetch('/criarAdmin', {
+        const { ok, data } = await apiFetch('/criarBarber', {
             method: 'POST',
             body: JSON.stringify({
                 user: novoAdminNome,
@@ -131,13 +144,78 @@ export function Admin () {
 
     }
 
+
+    async function handleExcluirServico() {
+
+        if (!serviceToDeactivated) {
+            setDesativarDeuCerto(false)
+            setDesativarMsg('Escolha um serviço para desativar.')
+            return
+        }
+
+        setDesativando(true)
+
+        const { ok, data } = await apiFetch('/excluirServico', {
+            method: 'POST',
+            body: JSON.stringify({ service: serviceToDeactivated })
+        })
+
+        setDesativando(false)
+
+        setDesativarDeuCerto(ok)
+        setDesativarMsg(data.message)
+
+        if (ok) {
+            setServicos((lista) => lista.filter((item) => item.service !== serviceToDeactivated))
+            setServiceToBeDeactivated('')
+        }
+
+    }
+
+    async function handleExcluirBarbeiro() {
+
+        if (!barberToDeactivated) {
+            setDesativarDeuCerto(false)
+            setDesativarMsg('Escolha um barbeiro para desativar.')
+            return
+        }
+
+        setDesativando(true)
+
+        const { ok, data } = await apiFetch('/excluirBarber', {
+            method: 'POST',
+            body: JSON.stringify({ barber: barberToDeactivated })
+        })
+
+        setDesativando(false)
+
+        setDesativarDeuCerto(ok)
+        setDesativarMsg(data.message)
+
+        if (ok) {
+            setBarbeiros((lista) => lista.filter((item) => item.barber !== barberToDeactivated))
+            setBarberToBeDeactivated('')
+        }
+
+    }
+
+
+    function fecharDesativar() {
+        setExcluirAdminOpen(false)
+        setExcluirServicoOpen(false)
+        setBarberToBeDeactivated('')
+        setServiceToBeDeactivated('')
+        setDesativarMsg('')
+    }
+
     function fecharCriarAlgo() {
-        setCriarAdminOpen(false)
+        setModalGerencia(false)
         setCriarAdminMsg('')
         setNovoAdminNome('')
         setNovoAdminTelefone('')
         setCriarServicoMsg('')
         setNovoServicoNome('')
+        fecharDesativar()
     }
 
 
@@ -187,6 +265,21 @@ export function Admin () {
             allTheBarbers()
     
         }, [])
+    
+        useEffect(() => {
+    
+            async function allTheServices() {
+                
+                const { ok, data } = await apiFetch<Servico[]>('/servicos')
+    
+                if (ok){
+                    setServicos(data)
+                }
+            }
+    
+            allTheServices()
+    
+        }, [])
 
 
 
@@ -229,7 +322,7 @@ export function Admin () {
 
                     <button
                         className='button-novo-admin'
-                        onClick={() => setCriarAdminOpen(true)}
+                        onClick={() => setModalGerencia(true)}
                     >
                         <IoMdAddCircle />
                     </button>
@@ -382,9 +475,10 @@ export function Admin () {
 
                 )}
 
-                {criarAdminOpen && (
+                {modalGerencia && (
 
                     <div className="criar-admin-modal">
+
 
                         <div className='abas-modal'>
                             <button
@@ -405,6 +499,8 @@ export function Admin () {
 
                             {abaAtiva === 'barbeiro' && (
                                 <>
+                                    <h2 className='titulo-secao'>Criar novo barbeiro</h2>
+
                                     <div className='campo-novo-admin'>
                                         <label>Nome</label>
                                         <input
@@ -443,11 +539,21 @@ export function Admin () {
                                     >
                                         {criandoAdmin ? 'Criando...' : 'Criar barbeiro'}
                                     </button>
+
+                                    <button
+                                        className='botao-desativar'
+                                        onClick={() => setExcluirAdminOpen(true)}
+                                    >
+                                        Desativar barbeiro
+                                    </button>
+
                                 </>
                             )}
 
                             {abaAtiva === 'servico' && (
                                 <>
+                                    <h2 className='titulo-secao'>Criar novo serviço</h2>
+
                                     <div className='campo-novo-servico'>
                                         <label>Nome do Serviço</label>
                                         <input
@@ -475,6 +581,14 @@ export function Admin () {
                                     >
                                         {criandoServico ? 'Criando...' : 'Criar serviço'}
                                     </button>
+
+                                    <button
+                                        className='botao-desativar'
+                                        onClick={() => setExcluirServicoOpen(true)}
+                                    >
+                                        Desativar serviço
+                                    </button>
+
                                 </>
                             )}
 
@@ -486,6 +600,106 @@ export function Admin () {
                             </button>
 
                         </div>
+
+                    </div>
+
+                )}
+
+                {excluirAdminOpen && (
+
+                    <div className="desativar-modal">
+
+                        <h2 className='titulo-desativar'>Desativar barbeiro</h2>
+
+                        <p className='aviso-desativar'>
+                            O barbeiro deixa de aparecer para os clientes, todos os horários dele são cancelados,
+                            mas os agendamentos antigos continuam com ele no histórico.
+                        </p>
+
+                        <select
+                            className='select-desativar'
+                            value={barberToDeactivated}
+                            onChange={(event) => setBarberToBeDeactivated(event.target.value)}
+                        >
+                            <option value="">Escolha um barbeiro:</option>
+                            {barbeiros.map(barbeiro => (
+                                <option
+                                    key={barbeiro._id}
+                                    value={barbeiro.barber}
+                                >{barbeiro.barber}</option>
+                            ))}
+                        </select>
+
+                        {desativarMsg && (
+                            <p className={desativarDeuCerto ? 'resultado-desativar sucesso' : 'resultado-desativar erro'}>
+                                {desativarMsg}
+                            </p>
+                        )}
+
+                        <button
+                            className="confirmar-cancelamento"
+                            onClick={handleExcluirBarbeiro}
+                            disabled={desativando}
+                        >
+                            {desativando ? 'Desativando...' : 'Desativar barbeiro'}
+                        </button>
+
+                        <button
+                            className="cancelar-cancelamento"
+                            onClick={fecharDesativar}
+                        >
+                            Cancelar
+                        </button>
+
+                    </div>
+
+                )}
+
+                {excluirServicoOpen && (
+
+                    <div className="desativar-modal">
+
+                        <h2 className='titulo-desativar'>Desativar serviço</h2>
+
+                        <p className='aviso-desativar'>
+                            O serviço deixa de aparecer para os clientes, mas os
+                            agendamentos antigos continuam com ele no histórico.
+                        </p>
+
+                        <select
+                            className='select-desativar'
+                            value={serviceToDeactivated}
+                            onChange={(event) => setServiceToBeDeactivated(event.target.value)}
+                        >
+                            <option value="">Escolha um serviço:</option>
+                            {servicos.map(servico => (
+                                <option
+                                    key={servico._id}
+                                    value={servico.service}
+                                >{servico.service}</option>
+                            ))}
+                        </select>
+
+                        {desativarMsg && (
+                            <p className={desativarDeuCerto ? 'resultado-desativar sucesso' : 'resultado-desativar erro'}>
+                                {desativarMsg}
+                            </p>
+                        )}
+
+                        <button
+                            className="confirmar-cancelamento"
+                            onClick={handleExcluirServico}
+                            disabled={desativando}
+                        >
+                            {desativando ? 'Desativando...' : 'Desativar serviço'}
+                        </button>
+
+                        <button
+                            className="cancelar-cancelamento"
+                            onClick={fecharDesativar}
+                        >
+                            Cancelar
+                        </button>
 
                     </div>
 

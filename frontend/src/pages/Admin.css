@@ -398,3 +398,105 @@
     border-left: 3px solid var(--success);
     border-radius: var(--radius-sm);
 }
+
+/* Título de cada bloco dentro do modal (criar / desativar) */
+.titulo-secao {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+}
+
+/* Contorno em vez de preenchido: o botão perigoso não deve competir
+   com o de confirmar, que é a ação principal do modal. */
+.botao-desativar {
+    width: 100%;
+    margin-top: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+
+    font-weight: 600;
+    color: var(--danger);
+
+    background: transparent;
+    border: 1px solid var(--danger);
+    border-radius: var(--radius-sm);
+}
+
+.botao-desativar:hover {
+    color: #fff;
+    background: var(--danger);
+}
+
+/* Modal de desativar — abre por cima do modal de gerência, por isso
+   o z-index maior que os 1000 da regra compartilhada. Herda o resto
+   (posição, largura, sombra) do .cancelamento-modal. */
+.desativar-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1100;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+
+    width: calc(100% - 2 * var(--space-5));
+    max-width: 340px;
+    padding: var(--space-6);
+
+    background: var(--surface-2);
+    border: 1px solid var(--danger);
+    border-radius: var(--radius);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+}
+
+.titulo-desativar {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    text-align: left;
+    color: var(--text-strong);
+}
+
+.aviso-desativar {
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    text-align: left;
+    color: var(--text-muted);
+}
+
+.select-desativar {
+    width: 100%;
+    font-size: var(--text-sm);
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg);
+}
+
+.resultado-desativar {
+    padding: var(--space-3) var(--space-4);
+
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-align: left;
+
+    border-radius: var(--radius-sm);
+    border-left: 3px solid;
+}
+
+.resultado-desativar.sucesso {
+    color: var(--success);
+    background: rgba(74, 222, 128, 0.1);
+}
+
+.resultado-desativar.erro {
+    color: var(--danger);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* Os dois botões do rodapé vêm do modal de cancelamento, que usa
+   font-size 20px. Aqui o modal é menor. */
+.desativar-modal button {
+    font-size: var(--text-sm);
+}

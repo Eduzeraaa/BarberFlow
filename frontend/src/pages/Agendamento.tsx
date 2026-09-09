@@ -6,15 +6,7 @@ import { Header } from '../components/RoutesHeader/RoutesHeader';
 import { useUser } from '../context/UserContext'
 import { dataDeHoje } from '../utils/data'
 
-type Barbeiro = {
-    _id: string
-    barber: string
-}
-
-type Servico = {
-    _id: string
-    service: string
-}
+import type { Barbeiro, Servico } from './Admin'
 
 export function Agendamento () {
 
@@ -30,6 +22,7 @@ export function Agendamento () {
     const [recarregarHorarios, setRecarregarHorarios] = useState(0)
     const [barbeiros, setBarbeiros] = useState<Barbeiro[]>([])
     const [servicos, setServicos] = useState<Servico[]>([])
+    const [horarios, setHorarios] = useState<string[]>([])
 
     const hoje = dataDeHoje()
     const redirect = useNavigate()
@@ -95,6 +88,21 @@ export function Agendamento () {
         }
 
         allTheServices()
+
+    }, [])
+
+    useEffect(() => {
+
+        async function allTheHorarios() {
+
+            const { ok, data } = await apiFetch<string[]>('/horarios')
+
+            if (ok){
+                setHorarios(data)
+            }
+        }
+
+        allTheHorarios()
 
     }, [])
 
@@ -173,7 +181,7 @@ export function Agendamento () {
                     <h2 className='subtitle'>Horário</h2>
                     <select className='horario' name="horario" onChange={(event) => setTime(event.target.value)}>
                         <option value="escolha-time">Escolha um horário:</option>
-                        {['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'].map(timeSlot => (
+                        {horarios.map(timeSlot => (
                             <option
                                 key={timeSlot}
                                 value={timeSlot}

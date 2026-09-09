@@ -1,5 +1,6 @@
 interface Barbers{
-    barber: string
+    barber: string,
+    active: boolean
 }
 
 export type { Barbers }

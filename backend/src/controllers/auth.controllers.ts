@@ -1,7 +1,6 @@
 import type { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
-import crypto from 'crypto'
-import { barbers, users } from '../config/database.js'
+import { users } from '../config/database.js'
 import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from '../config/env.js'
 import { normalizePhone } from '../utils/phone.js'
@@ -116,63 +115,6 @@ export async function login(request: Request, response: Response) {
         role: searchResult.role,
         phone: searchResult.phone
     })
-}
-
-
-// ==================================================================================================================================================================
-
-
-export async function createAdmin (request:Request, response:Response){
-
-    const {user, phone} = request.body
-
-    if (!user || !phone) {
-        return response.status(400).json({
-            message: 'Informe nome e telefone.'
-        })
-    }
-
-    const phoneNormalizado = normalizePhone(phone)
-
-    if (!phoneNormalizado) {
-        return response.status(400).json({
-            message: 'Telefone inválido.'
-        })
-    }
-
-    const searchResult = await users.findOne({
-        $or: [{ user }, { phone: phoneNormalizado }]
-    })
-
-    if (searchResult === null){
-
-        const randomPassword = String(crypto.randomInt(100000, 1000000))
-
-        const saltRounds = 10
-
-        const hashPassword = await bcrypt.hash(randomPassword, saltRounds)
-
-        await users.insertOne({user, role:'admin', password: hashPassword, phone: phoneNormalizado})
-
-        await barbers.insertOne({barber: user})
-
-        response.status(201).json({
-            message: 'Admin criado!',
-        })
-    }
-
-    else if (searchResult.user === user) {
-        response.status(409).json({
-            message: 'Esse nome já está cadastrado. Escolha outro nome ou faça login!'
-        })
-    }
-
-    else if (searchResult.phone === phoneNormalizado) {
-        response.status(409).json({
-            message: 'Esse telefone já está cadastrado. Faça login ou entre em contato com o suporte.'
-        })
-    }
-
 }
 
 

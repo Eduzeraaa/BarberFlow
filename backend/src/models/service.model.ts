@@ -1,5 +1,6 @@
 interface Service{
-    service: string
+    service: string,
+    active: boolean
 }
 
 export type { Service }
