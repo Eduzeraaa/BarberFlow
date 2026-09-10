@@ -14,6 +14,10 @@ export function Cadastro () {
     const [passwordConfirm, setPasswordConfirm] = useState('')
     const [phone, setPhone] = useState('')
     const [confirm, setConfirm] = useState('')
+    const [confirmDeuCerto, setConfirmDeuCerto] = useState(false)
+    const [codigo, setCodigo] = useState('')
+    const [etapa, setEtapa] = useState<'dados' | 'codigo'>('dados')
+    const [enviando, setEnviando] = useState(false)
 
     const redirect = useNavigate()
 
@@ -24,13 +28,15 @@ export function Cadastro () {
             setError('Sua senha contém menos que 8 caracteres.')
             return
         }
-        
+
         else if (password !== passwordConfirm) {
             setError('Senhas diferentes!')
             return
         }
 
         setError('')
+        setConfirm('')
+        setEnviando(true)
 
         const { ok, data } = await apiFetch('/cadastro', {
             method: 'POST',
@@ -41,17 +47,48 @@ export function Cadastro () {
             })
         })
 
+        setEnviando(false)
+
+        setConfirmDeuCerto(ok)
+        setConfirm(data.message)
+
+        if (ok){
+            setEtapa('codigo')
+        }
+
+    }
+
+    async function handleConfirmarCodigo() {
+
+        if (!codigo) {
+            setError('Informe o código que chegou no seu WhatsApp.')
+            return
+        }
+
+        setError('')
+        setEnviando(true)
+
+        const { ok, data } = await apiFetch('/cadastro/confirmar', {
+            method: 'POST',
+            body: JSON.stringify({
+                user,
+                password,
+                phone,
+                code: codigo
+            })
+        })
+
+        setEnviando(false)
+
         if (ok){
             redirect('/login', {
                 state: {message: data.message}
             })
+            return
         }
 
-        else{
-            setConfirm(data.message)
-        }
-
-        
+        setConfirmDeuCerto(false)
+        setConfirm(data.message)
 
     }
 
@@ -66,7 +103,50 @@ export function Cadastro () {
                 </div>
 
                     <div className="cadastro-container">
-                        
+
+                        {etapa === 'codigo' && (
+                            <>
+                                <div className='codigo-cadastro'>
+                                    <TbLock />
+                                    <label>Código</label>
+                                    <input
+                                        className='codigo-input-signup'
+                                        type="text"
+                                        inputMode='numeric'
+                                        placeholder='Código de 6 dígitos'
+                                        value={codigo}
+                                        onChange={(event) => setCodigo(event.target.value)}
+                                    />
+                                </div>
+
+                                <button
+                                    className='confirm-button'
+                                    onClick={handleConfirmarCodigo}
+                                    disabled={enviando}
+                                >{enviando ? 'Confirmando...' : 'Confirmar código'}</button>
+
+                                <button
+                                    className='voltar-button'
+                                    onClick={() => {
+                                        setEtapa('dados')
+                                        setCodigo('')
+                                        setConfirm('')
+                                        setError('')
+                                    }}
+                                >Corrigir meus dados</button>
+
+                                {/* aviso, não erro: falta preencher, nada quebrou */}
+                                <p className='mensagem-cadastro'>{error}</p>
+
+                                <p className={confirmDeuCerto ? 'mensagem-cadastro sucesso' : 'mensagem-cadastro erro'}>
+                                    {confirm}
+                                </p>
+                            </>
+                        )}
+
+                        {etapa === 'dados' && (
+                        <>
+
                         <div className='user-cadastro'>
                             <FaUser/>
                             <label>Nome</label>
@@ -84,7 +164,7 @@ export function Cadastro () {
                             <input 
                                 className='user-number-signup'
                                 type="text"
-                                placeholder='Telefone (com DDD)'
+                                placeholder='(61) 99999-8888'
                                 onChange={(event) => setPhone(event.target.value)}
                             />
                         </div>
@@ -117,17 +197,21 @@ export function Cadastro () {
                         </div>
 
 
-                        <button 
+                        <button
                             className='confirm-button'
                             onClick={handleConfirm}
-                        >Confirmar</button>
+                            disabled={enviando}
+                        >{enviando ? 'Enviando código...' : 'Confirmar'}</button>
 
-                        <p>{error}</p>
+                        <p className='mensagem-cadastro erro'>{error}</p>
 
-                        <div className='confirmacao-login'>
-                            <h2>{confirm}</h2>
-                        </div>
-                        
+                        <p className={confirmDeuCerto ? 'mensagem-cadastro sucesso' : 'mensagem-cadastro erro'}>
+                            {confirm}
+                        </p>
+
+                        </>
+                        )}
+
                     </div>
 
             </div>

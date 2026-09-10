@@ -11,7 +11,7 @@ export async function generateCode() {
 
     const codeHash = await bcrypt.hash(code, 10) 
 
-    return{ code, codeHash}
+    return { code, codeHash }
 
 }
 

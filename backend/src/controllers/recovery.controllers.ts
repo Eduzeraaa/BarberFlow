@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 import { users, recovery } from '../config/database.js'
-import { sendSMS } from '../services/sms.service.js'
-import { saveCode, deleteCode, generateCode, validateCode } from '../services/recovery.service.js'
+import { msgVerificacaoTelefone } from '../services/whatsapp.services.js'
+import { saveCode, deleteCode, generateCode, validateCode } from '../services/codeSending.service.js'
 import bcrypt from 'bcrypt'
 import { normalizePhone } from '../utils/phone.js'
 
@@ -48,11 +48,20 @@ export async function requestRecovery(request: Request, response: Response)  {
 
     await saveCode(phone, codeHash)
 
-    await sendSMS(phone, code)
+    try {
+        await msgVerificacaoTelefone(phone, code)
+    } catch (erro) {
+        console.error('Falha ao enviar o código no WhatsApp:', erro)
+        await deleteCode(phone)
+        return response.status(400).json({
+            success: false,
+            message: 'Não conseguimos enviar o código. Confira se esse número tem WhatsApp.'
+        })
+    }
 
     response.status(200).json({
         success: true,
-        message: 'Um código será enviado para o seu telefone via SMS!'
+        message: 'Um código foi enviado para o seu WhatsApp!'
     })
 
 }
@@ -90,12 +99,12 @@ export async function resetPassword(request: Request, response: Response) {
         })
     }
 
-if (newPassword !== confirmNewPassword) {
-    return response.status(400).json({
-        success: false,
-        message: 'As senhas são diferentes.'
-    })
-}
+    if (newPassword !== confirmNewPassword) {
+        return response.status(400).json({
+            success: false,
+            message: 'As senhas são diferentes.'
+        })
+    }
 
     const saltRounds = 10
     const hashPassword = await bcrypt.hash(newPassword, saltRounds)

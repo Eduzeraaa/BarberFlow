@@ -28,6 +28,7 @@
 }
 
 .user-cadastro,
+.codigo-cadastro,
 .telefone-cadastro,
 .password-cadastro,
 .password-confirm {
@@ -37,6 +38,7 @@
 }
 
 .user-cadastro svg,
+.codigo-cadastro svg,
 .telefone-cadastro svg,
 .password-cadastro svg,
 .password-confirm svg {
@@ -46,6 +48,7 @@
 }
 
 .user-cadastro label,
+.codigo-cadastro label,
 .telefone-cadastro label,
 .password-cadastro label,
 .password-confirm label {
@@ -58,6 +61,7 @@
 }
 
 .user-input-signup,
+.codigo-input-signup,
 .user-number-signup,
 .password-input-signup {
   flex: 1;
@@ -90,19 +94,55 @@
   border-color: var(--accent-hover);
 }
 
-/* mensagens de erro só aparecem quando têm texto */
-.cadastro-container > p:empty {
+/* só aparecem quando têm texto */
+.mensagem-cadastro:empty {
   display: none;
 }
 
-.cadastro-container > p {
+/* Formato base, neutro. A cor de alarme vem só com o modificador .erro,
+   senão todo aviso do formulário nasce parecendo problema. */
+.mensagem-cadastro {
   padding: var(--space-3) var(--space-4);
 
   font-size: var(--text-sm);
   font-weight: 500;
+  text-align: left;
+  color: var(--text-muted);
+
+  background: var(--surface-2);
+  border-left: 3px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+}
+
+.mensagem-cadastro.sucesso {
+  color: var(--success);
+
+  background: rgba(74, 222, 128, 0.1);
+  border-left-color: var(--success);
+}
+
+.mensagem-cadastro.erro {
   color: var(--danger);
 
   background: rgba(239, 68, 68, 0.1);
-  border-left: 3px solid var(--danger);
+  border-left-color: var(--danger);
+}
+
+/* Sai da etapa do código e volta pro formulário. Vazado, para não
+   competir com o botão de confirmar. */
+.voltar-button {
+  width: 100%;
+  padding: var(--space-3) var(--space-5);
+
+  font-size: var(--text-sm);
+  color: var(--text);
+
+  background: transparent;
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
+}
+
+.voltar-button:hover {
+  background: var(--surface);
+  color: var(--text-strong);
 }
