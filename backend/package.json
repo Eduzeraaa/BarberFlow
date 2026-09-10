@@ -21,7 +21,8 @@
     "express": "^5.2.1",
     "express-rate-limit": "^8.6.2",
     "jsonwebtoken": "^9.0.3",
-    "mongodb": "^7.5.0"
+    "mongodb": "^7.5.0",
+    "waha-node": "^1.0.0"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",

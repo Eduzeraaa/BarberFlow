@@ -369,7 +369,7 @@ export function Admin () {
 
                                         <td>
 
-                                            {appointment.status === true && appointment.barber === user?.user || appointment.status === true && user?.role === 'dev' &&(
+                                            {appointment.status === true && (appointment.barber === user?.user || user?.role === 'dev') &&(
                                                 <button
                                                     className='botao-cancelamento'
                                                     title='Cancelar agendamento'

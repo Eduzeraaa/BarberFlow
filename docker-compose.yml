@@ -24,6 +24,25 @@ services:
       - mongo-data:/data/db
 
   # ---------------------------------------------------------------
+  # WAHA - API não oficial do WhatsApp
+  # ---------------------------------------------------------------
+
+  waha:
+    image: devlikeapro/waha
+
+    ports: 
+      - "3001:3000" # não pode ser a porta 3000 do pc, pq o backend já está usando
+
+    volumes:
+      - volume-waha-sessions:/app/.sessions
+      - volume-waha-media:/app/.media
+
+    environment:
+      - WAHA_API_KEY=${WAHA_API_KEY}
+      - WAHA_DASHBOARD_USERNAME=${WAHA_DASHBOARD_USERNAME}
+      - WAHA_DASHBOARD_PASSWORD=${WAHA_DASHBOARD_PASSWORD}
+
+  # ---------------------------------------------------------------
   # BACKEND — Express + tsx watch
   # ---------------------------------------------------------------
   backend:
@@ -107,3 +126,5 @@ services:
 # -------------------------------------------------------------------
 volumes:
   mongo-data:
+  volume-waha-sessions:
+  volume-waha-media:

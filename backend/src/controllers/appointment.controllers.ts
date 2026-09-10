@@ -2,6 +2,7 @@ import type { Request, Response } from 'express'
 import { ObjectId } from 'mongodb'
 import { agendamentos, barbers, services } from '../config/database.js'
 import { HORARIOS } from '../config/horarios.js'
+import { whatsAppCancel } from '../services/whatsapp.services.js'
 
 export async function getHorarios(request: Request, response: Response) {
     response.status(200).json(HORARIOS)
@@ -32,7 +33,7 @@ export async function createAppointment(request: Request, response: Response) {
 
     const servicoExiste = await services.findOne({ service })
 
-    const servicoEstaAtivo = await services.findOne({service: service, active: false})
+    const servicoEstaAtivo = await services.findOne({service: service, active: true})
 
     if (servicoExiste === null || servicoEstaAtivo === null) {
         return response.status(400).json({ message: 'Não oferecemos esse serviço.' })
@@ -40,7 +41,7 @@ export async function createAppointment(request: Request, response: Response) {
 
     const barbeiroExiste = await barbers.findOne({ barber })
 
-    const barbeiroEstaAtivo = await barbers.findOne({barber: barber, active: false})
+    const barbeiroEstaAtivo = await barbers.findOne({barber: barber, active: true})
 
     if (barbeiroExiste === null || barbeiroEstaAtivo === null) {
         return response.status(400).json({ message: 'Esse barbeiro não é nosso funcionário.' })
@@ -149,9 +150,20 @@ export async function cancelAppointment(request: Request, response: Response) {
         { $set: { status: false } }
     )
 
+    if (ehBarbeiroDoHorario) {
+
+        try {
+            await whatsAppCancel(appointment.phone, appointment.barber, appointment.date)
+        } catch (erro) {
+            console.error('Falha ao avisar o cliente no WhatsApp:', erro)
+        }
+
+    }
+
     return response.status(200).json({
         message: `Agendamento cancelado com sucesso!`
     })
+
 }
 
 
