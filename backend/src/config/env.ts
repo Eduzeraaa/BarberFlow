@@ -32,6 +32,15 @@ if (!ORIGIN) {
 }
 
 
+const internal_api_key = process.env.INTERNAL_API_KEY
+
+if (!internal_api_key) {
+  throw new Error('INTERNAL_API_KEY is not defined')
+}
+
+
+export const INTERNAL_API_KEY: string = internal_api_key
+
 export const origin: string = ORIGIN
 
 export const url: string = DB_CONN_STRING

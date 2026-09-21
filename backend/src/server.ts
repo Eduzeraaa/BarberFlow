@@ -6,6 +6,7 @@ import appointmentRoutes from './routes/appointment.routes.js'
 import smsRoutes from './routes/recovery.routes.js'
 import barberRoutes from './routes/barber.routes.js'
 import serviceRoutes from './routes/service.routes.js'
+import internoRoutes from './routes/interno.routes.js'
 import { origin, port } from './config/env.js'
 import cookieParser from 'cookie-parser'
 
@@ -22,6 +23,7 @@ app.use(appointmentRoutes)
 app.use(smsRoutes)
 app.use(barberRoutes)
 app.use(serviceRoutes)
+app.use(internoRoutes)
 
 async function start() {
     await connectDatabase()

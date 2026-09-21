@@ -41,6 +41,8 @@ services:
       - WAHA_API_KEY=${WAHA_API_KEY}
       - WAHA_DASHBOARD_USERNAME=${WAHA_DASHBOARD_USERNAME}
       - WAHA_DASHBOARD_PASSWORD=${WAHA_DASHBOARD_PASSWORD}
+      - WHATSAPP_HOOK_URL=http://agent:8000/webhook/whatsapp      # <---------- pra onde faz o post
+      - WHATSAPP_HOOK_EVENTS=message.any       # <---------- quais eventos mandam o post
 
   # ---------------------------------------------------------------
   # BACKEND — Express + tsx watch
@@ -119,6 +121,22 @@ services:
 
     # Sem depends_on: o conteiner do frontend nao conversa com o backend.
     # Ele so entrega os arquivos pro navegador.
+
+  agent:
+    build: ./agent
+
+    ports:
+      - "8000:8000"
+
+    env_file:
+      - ./agent/.env
+
+    environment:
+      - WATCHFILES_FORCE_POLLING=true
+
+    volumes:
+      - ./agent:/app
+      - /app/.venv
 
 # -------------------------------------------------------------------
 # Todo volume NOMEADO usado acima precisa ser declarado aqui embaixo.

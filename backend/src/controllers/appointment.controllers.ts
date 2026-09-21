@@ -1,8 +1,7 @@
 import type { Request, Response } from 'express'
-import { ObjectId } from 'mongodb'
-import { agendamentos, barbers, services } from '../config/database.js'
+import { agendamentos } from '../config/database.js'
 import { HORARIOS } from '../config/horarios.js'
-import { whatsAppCancel } from '../services/whatsapp.services.js'
+import { agendar, cancelar } from '../services/appointment.service.js'
 
 export async function getHorarios(request: Request, response: Response) {
     response.status(200).json(HORARIOS)
@@ -15,75 +14,20 @@ export async function getHorarios(request: Request, response: Response) {
 
 
 export async function createAppointment(request: Request, response: Response) {
-    const { service, barber, date, time } = request.body
-    
+
     if (!request.user) {
         return response.status(401).json({ message: 'Não autenticado' })
     }
 
-    const user = request.user?.user
-    const phone = request.user?.phone
+    const { service, barber, date, time } = request.body
 
-    if (service === undefined || barber === undefined || date === undefined || time === undefined || service === '' || barber === ''){
-        response.status(400).json({
-            message: 'Falta alguma informação! Confira novamente seu agendamento.',
-        })
-        return
-    }
-
-    const servicoExiste = await services.findOne({ service })
-
-    const servicoEstaAtivo = await services.findOne({service: service, active: true})
-
-    if (servicoExiste === null || servicoEstaAtivo === null) {
-        return response.status(400).json({ message: 'Não oferecemos esse serviço.' })
-    }
-
-    const barbeiroExiste = await barbers.findOne({ barber })
-
-    const barbeiroEstaAtivo = await barbers.findOne({barber: barber, active: true})
-
-    if (barbeiroExiste === null || barbeiroEstaAtivo === null) {
-        return response.status(400).json({ message: 'Esse barbeiro não é nosso funcionário.' })
-    }
-
-    if (!HORARIOS.includes(time)) {
-        return response.status(400).json({ message: 'Esse horário não está na nossa grade.' })
-    }
-
-    const agendamentoEm = new Date(`${date}T${time}:00-03:00`)
-
-    if (Number.isNaN(agendamentoEm.getTime())) {
-        return response.status(400).json({ message: 'Data inválida.' })
-    }
-
-    if (agendamentoEm.getTime() <= Date.now()) {
-        return response.status(400).json({ message: 'Não dá para agendar em um horário que já passou.' })
-    }
-
-    const searchRequirements = await agendamentos.findOne({'time': time, 'date': date, 'barber': barber, 'status': true})
-
-
-    if (searchRequirements !== null ){
-        response.status(400).json({
-            message: `${barber} está com o horário ocupado. Tente outro horário ou outro barbeiro!`
-        })
-        return
-    }
-
-    await agendamentos.insertOne({
-        user,
-        phone,
-        service,
-        barber,
-        date,
-        time,
-        status: true
+    const resultado = await agendar({
+        user: request.user.user,
+        phone: request.user.phone,
+        service, barber, date, time
     })
 
-    response.status(200).json({
-        message: `Agendamento realizado com sucesso! Nos vemos no dia ${date} às ${time}.`,
-    })
+    return response.status(resultado.status).json({ message: resultado.message })
 }
 
 
@@ -122,48 +66,19 @@ export async function getBookedTimes(request: Request, response: Response) {
 
 
 export async function cancelAppointment(request: Request, response: Response) {
-    const { id } = request.body
 
     if (!request.user) {
         return response.status(401).json({ message: 'Não autenticado' })
     }
 
-    if (!ObjectId.isValid(id)) {
-        return response.status(400).json({ message: 'Agendamento inválido.' })
-    }
-
-    const appointment = await agendamentos.findOne({ _id: new ObjectId(id) })
-
-    if (appointment === null) {
-        return response.status(404).json({ message: 'Agendamento não encontrado.' })
-    }
-
-    const ehCliente = appointment.phone === request.user.phone
-    const ehBarbeiroDoHorario = appointment.barber === request.user.user
-
-    if (!ehCliente && !ehBarbeiroDoHorario && request.user?.role !== 'dev') {
-        return response.status(403).json({ message: 'Você não pode cancelar este agendamento.' })
-    }
-
-    await agendamentos.updateOne(
-        { _id: appointment._id },
-        { $set: { status: false } }
-    )
-
-    if (ehBarbeiroDoHorario) {
-
-        try {
-            await whatsAppCancel(appointment.phone, appointment.barber, appointment.date)
-        } catch (erro) {
-            console.error('Falha ao avisar o cliente no WhatsApp:', erro)
-        }
-
-    }
-
-    return response.status(200).json({
-        message: `Agendamento cancelado com sucesso!`
+    const resultado = await cancelar({
+        id: request.body.id,
+        user: request.user.user,
+        phone: request.user.phone,
+        role: request.user.role
     })
 
+    return response.status(resultado.status).json({ message: resultado.message })
 }
 
 

@@ -10,12 +10,6 @@ function novoCliente() {
     )
 }
 
-// Traduz o telefone guardado no banco (5561999998888) para o chatId que o
-// WhatsApp usa.
-//
-// Nao da para montar isso na mao: numeros brasileiros antigos estao
-// registrados SEM o nono digito, e os novos COM. Em vez de chutar a regra,
-// perguntamos ao WAHA e usamos o chatId que ele devolve.
 async function paraChatId(phone: string) {
 
     const numero = normalizePhone(phone)
@@ -40,8 +34,6 @@ async function paraChatId(phone: string) {
         throw new Error(`O numero ${numero} nao tem WhatsApp.`)
     }
 
-    // WAHA fora do ar ou sessao caida: tenta o formato direto em vez de
-    // desistir. Se estiver errado, o proprio sendText reclama.
     return `${numero}@c.us`
 
 }
