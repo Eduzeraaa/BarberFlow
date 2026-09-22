@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 import httpx
 from memory import carregar, salvar
+from agent import responder
 
 load_dotenv()
 
@@ -41,7 +42,7 @@ async def lid_para_telefone(lid: str) -> str | None:
 # Manda texto para um chat. O chat_id e o mesmo "from" que chegou no
 # webhook — nao precisa traduzir nada para responder.
 async def enviar_mensagem(chat_id: str, texto: str) -> None:
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=30) as client:
         resposta = await client.post(
             f"{WAHA_URL}/api/sendText",
             headers={"X-Api-Key": WAHA_API_KEY},
@@ -79,7 +80,11 @@ async def webhook(payload: dict):
     mensagens = carregar(telefone)
     mensagens.append({"role": "user", "content": texto})
 
-    resposta = f"Você disse: {texto}"   # aqui entra o modelo depois
+    try:
+        resposta = await responder(telefone, mensagens)
+    except Exception as erro:
+        print("Falha no modelo:", repr(erro))
+        resposta = "Tive um problema aqui. Tenta de novo em um minuto?"
 
     mensagens.append({"role": "assistant", "content": resposta})
     salvar(telefone, mensagens)
